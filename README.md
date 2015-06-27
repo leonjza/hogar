@@ -8,7 +8,7 @@ A pluggable Telegram Bot based on the official Telegram [Bot API](https://core.t
 Hogar is a pure python Telegram Bot, fully extensible via plugins. Telegram recently announced official support for a [Bot API](https://telegram.org/blog/bot-revolution) allowing integrators of all sorts to bring automated interactions to the mobile platform. Hogar aims to provide a platform where once could simply write a plugin and have interactions in a matter of minutes.
 
 ## installation
-Essensially, all you really need for hogar is a python 2.x interpreter. If you use plugins that need database access, then you will need that too. I will also always suggest you run projects such as this in a python [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) so that the dependencies you install for Hogar dont interfere with the system provided ones. It also makes it easy to restart in case you messed up :)
+Essentially, all you really need for Hogar is a python 2.x interpreter. If you use plugins that need database access, then you will need that too. I will also always suggest you run projects such as this in a python [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) so that the dependencies you install for Hogar don’t interfere with the system provided ones. It also makes it easy to restart in case you messed up :)
 
 So here goes:
 
@@ -43,7 +43,7 @@ You will notice that the `settings.ini` wants a value for `bot_access_token`. Th
 The rest of the settings should be ok. If you want to use MySQL instead of the SQLite database, then update the required fields.
 
 ##### database
-Hogar has a sample plugin that allows you to store and retreive simple key value pairs. Storage of these reside within the database you have chosen. In order for this plugin to work, you need to setup the database first. To do this, type:
+Hogar has a sample plugin that allows you to store and retrieve simple key value pairs. Storage of these reside within the database you have chosen. In order for this plugin to work, you need to setup the database first. To do this, type:
 
 ```bash
 $ python start.py setupdb
