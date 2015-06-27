@@ -59,11 +59,8 @@ logger = logging.getLogger(__name__)
 
 # make some sub modules stfu
 logging.getLogger('urllib3').setLevel(logging.WARNING)
-# logging.getLogger('peewee').setLevel(logging.INFO)
+logging.getLogger('peewee').setLevel(logging.INFO)
 logging.getLogger('requests').setLevel(logging.WARNING)
-
-logger1 = logging.getLogger('peewee')
-logger1.setLevel(logging.DEBUG)
 
 # plugin storage
 command_map = {}
