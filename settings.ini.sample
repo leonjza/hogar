@@ -1,0 +1,20 @@
+; The Hogar Configuration File
+; The global settings should be ok defaults.
+[main]
+bot_access_token = YOUR_BOTS_TOKEN_HERE
+
+; Specify the database engine to use.
+;   Valid Options are: mysql, sqlite
+db_engine = sqlite
+
+[mysql]
+username = root
+password =
+database = hogar
+host = 127.0.0.1
+
+[sqlite]
+database_location = var/data.sqlite.db
+
+[advanced]
+long_poll_time = 60
