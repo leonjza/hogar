@@ -84,8 +84,8 @@ def banner():
 |   Y  (  <_> ) /_/  > __ \|  | \/
 |___|  /\____/\___  (____  /__|
      \/      /_____/     \/
-                   v0.1 - @leonjza
-    '''
+                   v{v} - @leonjza
+    '''.format(v = static_values.version)
     return
 
 def response_handler(response):
