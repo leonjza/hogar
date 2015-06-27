@@ -78,7 +78,7 @@ Hogar as it is does not do much. Almost all of the functionality is added via pl
 ##### plugin basics
 As previously mentioned, all a plugin really is is a set of functions defining a few characteristics of the plugin. The [sample plugin](https://github.com/leonjza/hogar/blob/master/hogar/Plugins/sample.py) is heavily documented and may also referred to if needed.
 
-###### how plugins are added
+##### how plugins are added
 Hogar has some features built in that will discover your plugin when it boots up. The following list describes the logic of the plugin loader found [here](https://github.com/leonjza/hogar/blob/master/hogar/Utils/PluginLoader.py):
 
  * The plugin loaders searches for files and folders in `hogar/Plugins`
@@ -88,11 +88,11 @@ Hogar has some features built in that will discover your plugin when it boots up
 
 If all of these conditions are met, the plugin loader will register the `commands` and message `types` that your plugin applies to and make it available to all messages that come in.
 
-###### plugin writing tips
-To write your first plugin, I would suggest you start off with making a new unique directory name in the `Plugins` directory and copy the `sample.py` to your plugin directory as `main.py`.  
-Ensure that you obey the return types as specified in the sample comments. Hogar expects to interpret your plugin based on these.  
-The `run()` method will receive the message as an argument for you to interpret/manipulate as needed.  
-Don't let the fact the required functions are needed hold you back from importing others and structuring the plugin as needed. :)
+##### plugin writing tips
+- To write your first plugin, I would suggest you start off with making a new unique directory name in the `Plugins` directory and copy the `sample.py` to your plugin directory as `main.py`.  
+- Ensure that you obey the return types as specified in the sample comments. Hogar expects to interpret your plugin based on these.  
+- The `run()` method will receive the message as an argument for you to interpret/manipulate as needed.  
+- Don't let the fact the required functions are needed hold you back from importing others and structuring the plugin as needed. :)
 
 ##### plugin sample
 A plugin could be seen as below. This plugin will respond with the string `This is a sample` for every text message received by your bot prefixed by the command `sample`. For example, the commands `/sample` and `@MrBot sample` or a direct message will all trigger your plugin.
