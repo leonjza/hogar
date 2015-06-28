@@ -180,7 +180,8 @@ def main():
                 headers = static_values.headers
             )
 
-            logger.debug('Request was made to url: {url}'.format(url = response.url))
+            logger.debug('Request was made to url: {url}'.format(
+                url = response.url).replace(API_TOKEN, '[api-key-redact]'))
 
         except requests.exceptions.Timeout, e:
 
