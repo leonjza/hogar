@@ -129,7 +129,7 @@ def send_message(recipient, message_type, message):
         'photo' : _nothing,
         'sticker' : _nothing,
         'video' : _nothing,
-        'contact' : _nothing,
+        'contact' : _send_text_message,
         'location' : _nothing,
     }
 

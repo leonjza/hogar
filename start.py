@@ -107,7 +107,11 @@ def response_handler(response):
         )
 
         handle = ResponseHandler.Response(response, command_map)
-        handle.run_plugins()
+
+        # Check if the ACL system is enabled and or if
+        # the user is allowed to send this bot messages
+        if handle.check_acl():
+            handle.run_plugins()
 
     except Exception, e:
         traceback.print_exc()

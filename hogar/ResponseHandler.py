@@ -25,10 +25,15 @@
 from hogar.static import values as static_values
 from hogar.Utils import PluginLoader
 from hogar.Utils import Telegram
+import ConfigParser
 import traceback
 
 import logging
 logger = logging.getLogger(__name__)
+
+# read the required configuration
+config = ConfigParser.ConfigParser()
+config.read('settings.ini')
 
 class Response(object):
 
@@ -44,7 +49,7 @@ class Response(object):
     command_map = None
     message_type = None
     plugins = None
-    sender_information = {'id' : None, 'first_name' : None, 'last_name' : None, 'username' : None }
+    sender_information = {'id' : None, 'first_name' : None, 'last_name' : None, 'username' : None}
 
     def __init__(self, response, command_map):
 
@@ -159,6 +164,37 @@ class Response(object):
             return [x for x in self.command_map['text'] if text.split(' ')[0] in x['commands']]
 
         return self.command_map[self.message_type]
+
+    def check_acl(self):
+
+        '''
+            Check Access Control List
+
+            Check if the ACL features are enbaled for this bot.
+            If it is, ensure that the message was received
+            from someone that is either the bot owner or
+            a user.
+
+            --
+            @return bool
+        '''
+
+        message_from_id = str(self.response['from']['id'])
+
+        # Check if ACL processing is enabled
+        if not config.getboolean('acl', 'enabled'):
+            return True
+
+        if message_from_id not in config.get('acl', 'owners').split(',') \
+            and message_from_id not in config.get('acl', 'users').split(', '):
+
+            logger.error('{first_name} ({id}) is not allowed to use this bot'.format(
+                first_name = self.response['from']['first_name'],
+                id = message_from_id
+            ))
+            return False
+
+        return True
 
     def run_plugins(self):
 

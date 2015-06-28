@@ -7,6 +7,11 @@ bot_access_token = YOUR_BOTS_TOKEN_HERE
 ;   Valid Options are: mysql, sqlite
 db_engine = sqlite
 
+[acl]
+enabled = no
+owners =
+users =
+
 [mysql]
 username = root
 password =
