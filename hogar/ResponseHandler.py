@@ -65,10 +65,21 @@ class Response(object):
         if not response['message']:
             raise ValueError('No message payload in the response? WTF?')
 
+        logger.info('Processing message {message_id} from {first_name} {last_name} '.format(
+            message_id = response['message']['message_id'],
+            first_name = response['message']['from']['first_name'],
+            last_name = response['message']['from']['last_name']
+        ))
+
         self.response = response['message']
         self.command_map = command_map
 
         self.message_type = self._get_message_type()
+        logger.info('Message {message_id} is a {type} message'.format(
+            message_id = response['message']['message_id'],
+            type = self.message_type
+        ))
+
         self.sender_information = self._get_sender_information()
         self.plugins = self._find_applicable_plugins()
 
@@ -167,7 +178,10 @@ class Response(object):
 
             try:
 
-                logger.info('Running plugin: {plugin}'.format(plugin = plugin['name']))
+                logger.info('Running plugin: {plugin} for message {message_id}'.format(
+                    plugin = plugin['name'],
+                    message_id = self.response['message_id']
+                ))
 
                 # Run the plugins run() method
                 plugin_output = plugin['plugin'].run(self.response)
