@@ -27,6 +27,9 @@ import urllib
 import ConfigParser
 from hogar.static import values as static_values
 
+import logging
+logger = logging.getLogger(__name__)
+
 config = ConfigParser.ConfigParser()
 config.read('settings.ini')
 
@@ -59,8 +62,6 @@ def _get_mention(recipient):
 
         @return str
     '''
-
-    print recipient
 
     return '{u}: '.format(u = recipient['username']) \
         if recipient['username'] is not None \
@@ -134,6 +135,15 @@ def send_message(recipient, message_type, message):
         'contact' : _nothing,
         'location' : _nothing,
     }
+
+    print message_type
+    print recipient['first_name']
+
+    # Log the sending of a message
+    logging.info('Sending {message_type} message to {recipient}'.format(
+        message_type = message_type,
+        recipient = recipient['first_name']
+    ))
 
     # Run the appropriate function
     options[message_type](recipient, message)
