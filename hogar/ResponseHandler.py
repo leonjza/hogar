@@ -69,7 +69,8 @@ class Response(object):
         logger.info('Processing message {message_id} from {first_name} {last_name} '.format(
             message_id = response['message']['message_id'],
             first_name = response['message']['from']['first_name'],
-            last_name = response['message']['from']['last_name']
+            last_name = response['message']['from']['last_name'] \
+                if 'last_name' in response['message']['from'] else ''
         ))
 
         self.response = response['message']
@@ -119,9 +120,11 @@ class Response(object):
         sender = self.response
 
         sender_information = {
+
             'id' : self.response['chat']['id'],
             'first_name' : self.response['from']['first_name'],
-            'last_name' : self.response['from']['last_name'],
+            'last_name' : self.response['from']['last_name'] \
+                if 'last_name' in self.response['from'] else None,
             'username' : '@{u}'.format(u = self.response['from']['username']) \
                 if 'username' in self.response['from'] else None
         }

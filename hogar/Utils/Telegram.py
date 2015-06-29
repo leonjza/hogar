@@ -60,8 +60,10 @@ def _get_mention(recipient):
         @return str
     '''
 
+    print recipient
+
     return '{u}: '.format(u = recipient['username']) \
-        if 'username' in recipient \
+        if recipient['username'] is not None \
         else '{f}: '.format(f = recipient['first_name'])
 
 def _truncate_text(message, length = 1900):
