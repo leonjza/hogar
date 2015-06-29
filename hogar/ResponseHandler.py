@@ -188,7 +188,7 @@ class Response(object):
             return True
 
         if message_from_id not in config.get('acl', 'owners').split(',') \
-            and message_from_id not in config.get('acl', 'users').split(', '):
+            and message_from_id not in config.get('acl', 'users').split(','):
 
             logger.error('{first_name} ({id}) is not allowed to use this bot'.format(
                 first_name = self.response['from']['first_name'],
