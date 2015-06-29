@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # The MIT License (MIT)
 #
 # Copyright (c) 2015 Leon Jacobs
@@ -31,7 +29,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Plugins will typically live in hogar/Plugins/
-plugin_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '/Plugins'
+plugin_path = os.path.abspath(
+    os.path.dirname(os.path.dirname(__file__))) + '/Plugins'
 
 # A plugin will have its entypoint defined by the main.py file.
 plugin_enty = 'main'
@@ -111,10 +110,22 @@ def prepare_plugins():
 
     for plugin in plugins:
 
-        # Load up the plugin
-        plugin_test = load_plugin(plugin)
-        plugin_commands = plugin_test.commands()
-        plugin_applicable_types = plugin_test.applicable_types()
+        # Attempt to load the plugins
+        try:
+
+            # Load up the plugin
+            plugin_test = load_plugin(plugin)
+            plugin_commands = plugin_test.commands()
+            plugin_applicable_types = plugin_test.applicable_types()
+            plugin_should_reply = plugin_test.should_reply()
+
+        except AttributeError, e:
+            error = 'Failed to load plugin {plugin}. Error: {error}'.format(
+                plugin = plugin['name'], error = str(e))
+            logger.error(error)
+            print ' * {error}'.format(error = error)
+
+            continue
 
         # Check the command list
         if not isinstance(plugin_commands, list):
@@ -142,6 +153,27 @@ def prepare_plugins():
                 ))
                 continue
 
+        # Check that should_reply() returned a boolean
+        if not isinstance(plugin_should_reply, bool):
+            logger.error('Skipping plugin {name}. applicable_types() should return a Boolean'.format(
+                name = plugin['name']
+            ))
+            continue
+
+        # Check if the plugin has a reply type set. If it does,
+        # the type should be one of the known types.
+        if hasattr(plugin_test, 'reply_type'):
+            if plugin_test.reply_type() not in static_values.possible_message_types:
+                logger.error('Skipping plugin {name}. reply_type() should be valid'.format(
+                    name = plugin['name']
+                ))
+                continue
+        else:
+            logger.warning('Plugin {plugin} does not specify a reply type. Defaulting to \'text\''.format(
+                plugin = plugin['name']
+            ))
+
+        # Load up the plugin
         logger.debug('Loading plugin: {name}'.format(name = plugin['name']))
 
         # load the commands into the command_map
@@ -150,7 +182,6 @@ def prepare_plugins():
                 'plugin' : plugin_test,
                 'name' : plugin['name'],
                 'commands' : plugin_commands
-
             })
 
     return command_map

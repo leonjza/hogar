@@ -69,6 +69,21 @@ def should_reply():
 
     return True
 
+def reply_type():
+
+    '''
+        Reply Type
+
+        Specifies the type of reply that should be sent to the
+        sender. This is an optional function. See hogar.static.values
+        for available types.
+
+        --
+        @return str
+    '''
+
+    return 'text'
+
 def run(message):
 
     '''
