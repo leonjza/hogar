@@ -33,6 +33,7 @@ import requests
 import urllib
 import json
 import traceback
+import time
 import multiprocessing as mp
 from datetime import datetime
 
@@ -83,6 +84,22 @@ def banner():
      \/      /_____/     \/
                    v{v} - @leonjza
     '''.format(v = static_values.version)
+    return
+
+def wait(t = 60):
+
+    '''
+        Wait
+
+        Causes a 'sleep' / lock state for t amount
+        of seconds
+
+        --
+        @return None
+    '''
+
+    time.sleep(t)
+
     return
 
 def response_handler(response):
@@ -193,14 +210,30 @@ def main():
             logger.debug('Request timed out: {error}'.format(error = str(e)))
             continue
 
+        # Check that the request was actually successful
+        if not response.status_code == requests.codes.ok:
+
+            # Ok. The response was not ok. We will log and wait
+            # a little bit as the Telegram API may be grumpy
+            logger.warning('Update check call failed. Server responded with HTTP code: {code}'.format(
+                code = response.status_code
+            ))
+
+            # Wait a little for the dust to settle and
+            # retry the update call
+            wait()
+            continue
+
         try:
             response_data = json.loads(response.text.strip())
 
         except ValueError, e:
 
             logger.error('Parsing response Json failed with: {err}'.format(err = str(e)))
-            print ' * Unable to decode the reponse Json. The error was: {err}'.format(err = str(e))
 
+            # Wait a little for the dust to settle and
+            # retry the update call
+            wait()
             continue
 
         # Ensure that the response from the Telegram API is ok
