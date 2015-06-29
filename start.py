@@ -204,7 +204,7 @@ def main():
 
         # Check that some data was received from the API
         if not response_data['result']:
-            logger.error('This poll retreived no data')
+            logger.debug('This poll retreived no data')
             continue
 
         # Update the last known maximum request ID. This is used
