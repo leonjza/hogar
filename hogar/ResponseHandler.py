@@ -31,10 +31,6 @@ import traceback
 import logging
 logger = logging.getLogger(__name__)
 
-# read the required configuration
-config = ConfigParser.ConfigParser()
-config.read('settings.ini')
-
 class Response(object):
 
     '''
@@ -178,6 +174,12 @@ class Response(object):
             --
             @return bool
         '''
+
+        # Read the configuration file. We do this here as the
+        # acls may have changed since the last time this
+        # module was loaded
+        config = ConfigParser.ConfigParser()
+        config.read('settings.ini')
 
         message_from_id = str(self.response['from']['id'])
 
