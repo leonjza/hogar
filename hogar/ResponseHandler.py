@@ -160,7 +160,7 @@ class Response(object):
             if text.startswith('/'):
                 text = text.replace('/', '', 1).strip()
 
-            return [x for x in self.command_map['text'] if text.split(' ')[0] in x['commands']]
+            return [x for x in self.command_map['text'] if text.split(' ')[0].lower() in x['commands']]
 
         return self.command_map[self.message_type]
 
