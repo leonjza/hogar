@@ -195,9 +195,14 @@ def main():
 
         response_data = json.loads(response.text.strip())
 
-        if not response_data['ok']:
-            raise ValeError('Errored response.')
+        # Ensure that the response from the Telegram API is ok
+        if 'ok' not in response_data or not response_data['ok']:
+            logger.error('Response from Telegram API was not OK. We got: {resp}'.format(
+                resp = str(response_data)
+            ))
+            continue
 
+        # Check that some data was received from the API
         if not response_data['result']:
             logger.error('This poll retreived no data')
             continue
