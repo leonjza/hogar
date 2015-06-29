@@ -211,6 +211,10 @@ class Response(object):
             @return None
         '''
 
+        if not self.plugins:
+            logger.warning('No plugins matched for this message.')
+            return
+
         #TODO: Handle if no plugins are applicable!
         for plugin in self.plugins:
 
