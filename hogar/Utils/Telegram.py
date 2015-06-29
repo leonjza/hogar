@@ -100,7 +100,7 @@ def _send_text_message(recipient, message):
             method = 'sendMessage',
             options = urllib.urlencode({
                 'chat_id': recipient['id'],
-                'text': _truncate_text(_get_mention(recipient) + message)
+                'text': _truncate_text(_get_mention(recipient) + message).encode('utf-8')
             })
         ),
         headers = static_values.headers
