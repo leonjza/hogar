@@ -137,7 +137,7 @@ def send_message(recipient, message_type, message):
     }
 
     # Log the sending of a message
-    logging.info('Sending {message_type} message to {recipient}'.format(
+    logger.info('Sending {message_type} message to {recipient}'.format(
         message_type = message_type,
         recipient = recipient['first_name']
     ))
