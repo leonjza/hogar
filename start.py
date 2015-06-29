@@ -193,7 +193,15 @@ def main():
             logger.debug('Request timed out: {error}'.format(error = str(e)))
             continue
 
-        response_data = json.loads(response.text.strip())
+        try:
+            response_data = json.loads(response.text.strip())
+
+        except ValueError, e:
+
+            logger.error('Parsing response Json failed with: {err}'.format(err = str(e)))
+            print ' * Unable to decode the reponse Json. The error was: {err}'.format(err = str(e))
+
+            continue
 
         # Ensure that the response from the Telegram API is ok
         if 'ok' not in response_data or not response_data['ok']:
