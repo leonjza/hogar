@@ -68,8 +68,8 @@ class Response(object):
 
         logger.info('Processing message {message_id} from {first_name} {last_name} '.format(
             message_id = response['message']['message_id'],
-            first_name = response['message']['from']['first_name'],
-            last_name = response['message']['from']['last_name'] \
+            first_name = response['message']['from']['first_name'].encode('utf-8'),
+            last_name = response['message']['from']['last_name'].encode('utf-8') \
                 if 'last_name' in response['message']['from'] else ''
         ))
 
