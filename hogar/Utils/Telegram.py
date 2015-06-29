@@ -136,9 +136,6 @@ def send_message(recipient, message_type, message):
         'location' : _nothing,
     }
 
-    print message_type
-    print recipient['first_name']
-
     # Log the sending of a message
     logging.info('Sending {message_type} message to {recipient}'.format(
         message_type = message_type,
