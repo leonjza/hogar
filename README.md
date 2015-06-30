@@ -5,7 +5,7 @@
 A pluggable Telegram Bot based on the official Telegram [Bot API](https://core.telegram.org/bots/api)
 
 ## introduction
-Hogar is a pure python Telegram Bot, fully extensible via plugins. Telegram recently announced official support for a [Bot API](https://telegram.org/blog/bot-revolution) allowing integrators of all sorts to bring automated interactions to the mobile platform. Hogar aims to provide a platform where once could simply write a plugin and have interactions in a matter of minutes.
+Hogar is a pure python Telegram Bot, fully extensible via plugins. Telegram recently announced official support for a [Bot API](https://telegram.org/blog/bot-revolution) allowing integrators of all sorts to bring automated interactions to the mobile platform. Hogar aims to provide a platform where one could simply write a plugin and have interactions in a matter of minutes.
 
 ## installation
 Essentially, all you really need for Hogar is a python 2.x interpreter. If you use plugins that need database access, then you will need that too. I will also always suggest you run projects such as this in a python [virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/) so that the dependencies you install for Hogar don’t interfere with the system provided ones. It also makes it easy to restart in case you messed up :)
@@ -76,7 +76,7 @@ python start.py
 Hogar as it is does not do much. Almost all of the functionality is added via plugins. Writing a plugin for Hogar is also very easy. The smallest of plugin should provide roughly 4 functions, one of which is a `run()` method. Samples may be found in the [hogar/Plugins](https://github.com/leonjza/hogar/tree/master/hogar/Plugins) directory.
 
 ##### plugin basics
-As previously mentioned, all a plugin really is is a set of functions defining a few characteristics of the plugin. The [sample plugin](https://github.com/leonjza/hogar/blob/master/hogar/Plugins/sample.py) is heavily documented and may also referred to if needed.
+As previously mentioned, all a plugin really is, is a set of functions defining a few characteristics of the plugin. The [sample plugin](https://github.com/leonjza/hogar/blob/master/hogar/Plugins/sample.py) is heavily documented and may also referred to if needed.
 
 ##### how plugins are added
 Hogar has some features built in that will discover your plugin when it boots up. The following list describes the logic of the plugin loader found [here](https://github.com/leonjza/hogar/blob/master/hogar/Utils/PluginLoader.py):
