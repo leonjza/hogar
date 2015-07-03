@@ -158,7 +158,15 @@ class Response(object):
             # Some bots will accept commands that started
             # with a '/'
             if text.startswith('/'):
+
+                # Remove the leading /
                 text = text.replace('/', '', 1).strip()
+
+                # If more than one bot is in a group chat, the
+                # Telegram client with have commands autocomleted
+                # as /action@bot_name. We will remove the mention
+                # in order to extract the command
+                text = text.split('@')[0].strip()
 
             return [x for x in self.command_map['text'] if text.split(' ')[0].lower() in x['commands']]
 
