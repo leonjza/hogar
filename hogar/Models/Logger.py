@@ -20,34 +20,30 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from hogar.Models.Base import db
+from peewee import *
+from hogar.Models.Base import BaseModel
 
-from hogar.Models.LearnKey import LearnKey
-from hogar.Models.LearnValue import LearnValue
-from hogar.Models.Logger import Logger
+import datetime
 
-import logging
-logger = logging.getLogger(__name__)
+class Logger(BaseModel):
 
-class DB():
+    created_date = DateTimeField(default=datetime.datetime.now)
 
-    @staticmethod
-    def setup():
+    message_id = IntegerField(unique = True, index = True)
+    message_type = CharField(max_length = 50, index = True)
+    telegram_date = IntegerField()
 
-        '''
-            Setup Database Tables
+    from_username = CharField(null = True, max_length = 250, index = True)
+    from_first_name = CharField(null = True, max_length = 250, index = True)
+    from_last_name = CharField(null = True, max_length = 250, index = True)
+    from_id = IntegerField(null = True, index = True)
 
-            The primary purpose of this method is to prepare the tables
-            needed in the database.
-        '''
+    chat_title = CharField(null = True, max_length = 250, index = True)
+    chat_id = IntegerField(null = True, index = True)
+    chat_username= CharField(null = True, max_length = 250, index = True)
+    chat_first_name = CharField(null = True, max_length = 250, index = True)
+    chat_last_name = CharField(null = True, max_length = 250, index = True)
+    chat_id = IntegerField(null = True, index = True)
 
-        # create the tables if they do not exist
-        with db.execution_context() as ctx:
-
-            logger.debug('Connected to database: %s' % db.database)
-            db.create_tables([
-                LearnKey, LearnValue, Logger
-            ], True)
-            logger.debug('Tables synced')
-
-        return
+    text = CharField(null = True, max_length = 2500)
+    file_id = CharField(null = True, max_length = 250)
