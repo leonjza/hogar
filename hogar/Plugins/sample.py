@@ -47,6 +47,10 @@ def commands():
         that this plugin should trigger for. For other
         message types, a empty list should be returned.
 
+        If your plugin applies to any command (in the
+        case of text messages), simply supply the a
+        wildcard in the list ie. ['*']
+
         --
         @return list
     '''

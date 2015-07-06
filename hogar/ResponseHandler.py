@@ -168,7 +168,11 @@ class Response(object):
                 # in order to extract the command
                 text = text.split('@')[0].strip()
 
-            return [x for x in self.command_map['text'] if text.split(' ')[0].lower() in x['commands']]
+            # Return all of the plugins that have the command
+            # defined as applicable, or any plugins that use
+            # the wildcard command
+            return [x for x in self.command_map['text'] \
+                if text.split(' ')[0].lower() in x['commands'] or '*' in x['commands']]
 
         return self.command_map[self.message_type]
 
