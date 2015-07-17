@@ -255,12 +255,17 @@ def main():
         LAST_REQUEST_ID =  max_request_id + 1 if ((max_request_id + 1) >= LAST_REQUEST_ID) else LAST_REQUEST_ID
 
         # Start a response handler for every message received
-        # in the long poll
+        # in the long poll. We make use of a pool that will
+        # handle only a few requests at a time
         pool = mp.Pool(processes = 4)
-        message_workers = [
-            pool.apply_async(response_handler, args=(message,)) \
-                for message in response_data['result']
-        ]
+
+        # Add every message to the pool
+        for message in response_data['result']:
+            pool.apply_async(response_handler, args=(message,))
+
+        # Close and join the results.
+        pool.close()
+        pool.join()
 
     return
 
