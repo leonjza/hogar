@@ -42,6 +42,7 @@ from hogar.Utils.DBUtils import DB
 from hogar.Models.Base import db
 
 from hogar.Utils import PluginLoader
+from hogar.Utils import Scheduler
 from hogar import ResponseHandler
 
 # read the required configuration
@@ -153,8 +154,6 @@ def main():
         --
         @return None
     '''
-
-    print ' * Starting long poller'
 
     logger.debug('Setting up env for the long poller')
 
@@ -310,4 +309,8 @@ if __name__ == '__main__':
         commands = '; '.join(command_map.keys())
     )
 
+    print ' * Booting the scheduler'
+    Scheduler.boot()
+
+    print ' * Starting long poll to the Telegram API'
     main()

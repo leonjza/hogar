@@ -20,35 +20,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from hogar.Models.Base import db
+from peewee import *
+from hogar.Models.Base import BaseModel
 
-from hogar.Models.LearnKey import LearnKey
-from hogar.Models.LearnValue import LearnValue
-from hogar.Models.Logger import Logger
-from hogar.Models.RemindOnce import RemindOnce
+class RemindRecurring(BaseModel):
 
-import logging
-logger = logging.getLogger(__name__)
-
-class DB():
-
-    @staticmethod
-    def setup():
-
-        '''
-            Setup Database Tables
-
-            The primary purpose of this method is to prepare the tables
-            needed in the database.
-        '''
-
-        # create the tables if they do not exist
-        with db.execution_context() as ctx:
-
-            logger.debug('Connected to database: %s' % db.database)
-            db.create_tables([
-                LearnKey, LearnValue, Logger, RemindOnce
-            ], True)
-            logger.debug('Tables synced')
-
-        return
+    name = CharField(unique=True, max_length = 50)

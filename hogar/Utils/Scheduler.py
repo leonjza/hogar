@@ -20,35 +20,59 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from hogar.Models.Base import db
+from multiprocessing import Pool
+import schedule
+import time
+import traceback
+import functools
 
-from hogar.Models.LearnKey import LearnKey
-from hogar.Models.LearnValue import LearnValue
-from hogar.Models.Logger import Logger
-from hogar.Models.RemindOnce import RemindOnce
+from hogar.Jobs import Reminder
 
 import logging
 logger = logging.getLogger(__name__)
 
-class DB():
+# The schedule package is pretty noisy. Reduce that.
+logging.getLogger('schedule').setLevel(logging.WARNING)
 
-    @staticmethod
-    def setup():
+def scheduler_init():
 
-        '''
-            Setup Database Tables
+    '''
+        Schedule Init
 
-            The primary purpose of this method is to prepare the tables
-            needed in the database.
-        '''
+        Start the main loop for the internal scheduler that
+        ticks every second.
 
-        # create the tables if they do not exist
-        with db.execution_context() as ctx:
+        --
+        @return void
+    '''
 
-            logger.debug('Connected to database: %s' % db.database)
-            db.create_tables([
-                LearnKey, LearnValue, Logger, RemindOnce
-            ], True)
-            logger.debug('Tables synced')
+    # Define the jobs to run at which intervals
+    schedule.every().minute.do(Reminder.run_remind_once)
 
-        return
+    # Start the main thread, polling the schedules
+    # every second
+    while True:
+
+        schedule.run_pending()
+        time.sleep(1)
+
+    return
+
+def boot():
+
+    '''
+        Boot
+
+        Starts the Scheduler
+
+        --
+        @return None
+    '''
+
+    pool = Pool(processes=1)
+    logger.debug('Started scheduler pool with 1 process')
+
+    pool.apply_async(scheduler_init)
+    logger.debug('Started async scheduler_init()')
+
+    return
