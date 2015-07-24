@@ -23,9 +23,11 @@
 import traceback
 import json
 from datetime import datetime
+from dateutil.rrule import rrulestr
 
 from hogar.Utils import Telegram
 from hogar.Models.RemindOnce import RemindOnce
+from hogar.Models.RemindRecurring import RemindRecurring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -75,7 +77,7 @@ def run_remind_once():
         for reminder in RemindOnce.select().where(RemindOnce.sent == 0, \
             RemindOnce.time <= datetime.now()):
 
-            logger.debug('Sending reminder message with id {id}'.format(
+            logger.debug('Sending one time reminder message with id {id}'.format(
                 id = reminder.id
             ))
 
@@ -88,6 +90,66 @@ def run_remind_once():
 
             # Mark it as complete
             reminder.sent = 1
+            reminder.save()
+
+    except Exception, e:
+
+        print traceback.format_exc()
+
+    return
+
+def run_remind_recurring():
+
+    '''
+        Run Remind Recurring
+
+        Find and send all of the recurring reminders that are due
+
+        --
+        @return void
+    '''
+
+    logger.debug('Running Remind Recurring')
+
+    try:
+
+        # Get reminders have have not been marked as completed, as well as
+        # have their next_run date ready or not set
+        for reminder in RemindRecurring.select().where(RemindRecurring.sent == 0, \
+            ((RemindRecurring.next_run <= datetime.now()) | (RemindRecurring.next_run >> None))):
+
+            # If we know the next_run date, send the message. If
+            # we dont know the next_run, this will be skipped
+            # and only the next_run determined
+            if reminder.next_run is not None:
+
+                logger.debug('Sending recurring reminder message with id {id}'.format(
+                    id = reminder.id
+                ))
+
+                # Send the actual reminder
+                Telegram.send_message(
+                    _get_sender_information(reminder.orig_message),
+                    'text',
+                    reminder.message)
+
+            # Lets parse the rrules and update the next_run time for
+            # a message. We will use python-dateutil to help with
+            # determinig the next run based on the parsed RRULE
+            # relative from now.
+            next_run = rrulestr(reminder.rrules,
+                dtstart = datetime.now()).after(datetime.now())
+
+            # If there is no next run, consider the
+            # schedule complete and mark it as
+            # sent
+            if not next_run:
+
+                reminder.sent = 1
+                reminder.save()
+
+            # Save the next run
+            reminder.next_run = next_run
             reminder.save()
 
     except Exception, e:

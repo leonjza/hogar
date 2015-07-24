@@ -26,6 +26,7 @@ from hogar.Models.LearnKey import LearnKey
 from hogar.Models.LearnValue import LearnValue
 from hogar.Models.Logger import Logger
 from hogar.Models.RemindOnce import RemindOnce
+from hogar.Models.RemindRecurring import RemindRecurring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -47,7 +48,7 @@ class DB():
 
             logger.debug('Connected to database: %s' % db.database)
             db.create_tables([
-                LearnKey, LearnValue, Logger, RemindOnce
+                LearnKey, LearnValue, Logger, RemindOnce, RemindRecurring
             ], True)
             logger.debug('Tables synced')
 

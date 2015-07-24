@@ -2,4 +2,5 @@ requests[security]
 peewee
 PyMySQL
 schedule
-parsedatetime
+recurrent
+python-dateutil

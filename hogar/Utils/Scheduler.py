@@ -48,6 +48,7 @@ def scheduler_init():
 
     # Define the jobs to run at which intervals
     schedule.every().minute.do(Reminder.run_remind_once)
+    schedule.every().minute.do(Reminder.run_remind_recurring)
 
     # Start the main thread, polling the schedules
     # every second

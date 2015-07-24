@@ -25,4 +25,8 @@ from hogar.Models.Base import BaseModel
 
 class RemindRecurring(BaseModel):
 
-    name = CharField(unique=True, max_length = 50)
+    orig_message = CharField(null = True, max_length = 2500)
+    rrules = CharField(max_length = 200)
+    next_run = DateTimeField(null = True)
+    message = CharField(null = True, max_length = 2500)
+    sent = IntegerField(default = 0)

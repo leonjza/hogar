@@ -22,12 +22,13 @@
 
 ''' A Simple Reminder Plugin '''
 
-import parsedatetime.parsedatetime as pdt
+from recurrent import RecurringEvent
 import datetime
 import time
 import json
 
 from hogar.Models.RemindOnce import RemindOnce
+from hogar.Models.RemindRecurring import RemindRecurring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -159,9 +160,6 @@ def _extract_parts(text):
     text = text.replace(action_recipient, '', 1).strip()
     parts['recipient'] = action_recipient
 
-    ##TODO. Parse the me as a personal reminder and us as
-    # a group reminder
-
     # Next part is to check the recurrence.
     recurrence = text.split(' ')[0].strip()
 
@@ -176,11 +174,9 @@ def _extract_parts(text):
         return parts
 
     # Set the recurrence and remove it from the text
-    text = text.replace(recurrence, '', 1).strip()
+    # only of it is set to 'once'
+    text = text.replace('once', '', 1).strip()
     parts['recurrence'] = recurrence
-
-    ##TODO: Parse every so that we can say
-    #   every 1 month from today at 1pm
 
     # Next, we parse the time. For this we should be
     # able to split by ,
@@ -197,8 +193,10 @@ def _extract_parts(text):
 
     # Resolve the human time to something we can work
     # with
-    parsed_time = _parse_date_string(time)
+    r = RecurringEvent()
+    parsed_time = r.parse(time)
 
+    # If the time parsing failed, oh well.
     if parsed_time is None:
 
         parts['error'] = True
@@ -215,37 +213,6 @@ def _extract_parts(text):
     parts['message'] = message
 
     return parts
-
-def _parse_date_string(s):
-
-    '''
-        Parse Date String
-
-        Parse a human provided string such as 'tomorrow
-        at 5pm' into a python datetime value.
-
-        --
-        @param  s:string    The time sent by the user
-
-        @return datetime
-    '''
-
-    c = pdt.Calendar()
-    result, pdt_type = c.parse(s)
-
-    dt = None
-
-    # what was returned (see http://code-bear.com/code/parsedatetime/docs/)
-    # 0 = failed to parse
-    # 1 = date (with current time, as a struct_time)
-    # 2 = time (with current date, as a struct_time)
-    # 3 = datetime
-    if pdt_type in (1,2,3):
-
-        # result is struct_time
-        dt = datetime.datetime(*result[:6])
-
-    return dt
 
 def _set_once_reminder(r, orig_message):
 
@@ -273,7 +240,7 @@ def _set_once_reminder(r, orig_message):
 
     return
 
-def _set_recurring_reminder(r, chat_id):
+def _set_recurring_reminder(r, orig_message):
 
     '''
         Set Recurring Reminder
@@ -289,7 +256,17 @@ def _set_recurring_reminder(r, chat_id):
         @return str
     '''
 
-    pass
+    logger.debug('Storing reminder for {id}'.format(
+        id = orig_message['chat']['id']
+    ))
+
+    RemindRecurring.create(
+        orig_message = json.dumps(orig_message),
+        rrules = r['parsed_time'],
+        message = r['message']
+    )
+
+    return
 
 def run(message):
 
