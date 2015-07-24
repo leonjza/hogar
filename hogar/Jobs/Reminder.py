@@ -109,7 +109,7 @@ def run_remind_recurring():
         @return void
     '''
 
-    logger.debug('Running Remind Recurring')
+    logger.debug('Running Remind Recurring Job')
 
     try:
 
@@ -147,6 +147,8 @@ def run_remind_recurring():
 
                 reminder.sent = 1
                 reminder.save()
+
+                continue
 
             # Save the next run
             reminder.next_run = next_run
