@@ -99,6 +99,9 @@ def wait(t = 60):
         @return None
     '''
 
+    logger.warning('Waiting for {time} seconds'.format(
+        time = t))
+
     time.sleep(t)
 
     return
@@ -157,29 +160,29 @@ def main():
 
     logger.debug('Setting up env for the long poller')
 
-    LONG_POLL_TIME = config.getint('advanced', 'long_poll_time')
-    API_TOKEN = config.get('main', 'bot_access_token', '')
-    LAST_REQUEST_ID = 0
-    NOW = int(datetime.now().strftime('%s'))
-    LAST_POLL_START = NOW
+    long_poll_time = config.getint('advanced', 'long_poll_time')
+    api_token = config.get('main', 'bot_access_token', '')
+    last_request_id = 0
+    now = int(datetime.now().strftime('%s'))
+    last_poll_start = now
 
     logger.info('Longpoll time is: {long_poll_time}'.format(
-        long_poll_time = LONG_POLL_TIME))
+        long_poll_time = long_poll_time))
 
     # Check that we know the bot access token
-    if len(API_TOKEN) < 1:
+    if len(api_token) < 1:
         raise ValeError('Please define a Bot Access token in the settings file.')
 
     while True:
 
-        NOW = int(datetime.now().strftime('%s'))
+        now = int(datetime.now().strftime('%s'))
         logger.debug(
             'New poller from request ID {request_id}. Previous poller time: {duration}s'.format(
-                request_id = LAST_REQUEST_ID,
-                duration = NOW - LAST_POLL_START
+                request_id = last_request_id,
+                duration = now - last_poll_start
             )
         )
-        LAST_POLL_START = NOW
+        last_poll_start = now
 
         # We will watch for timeouts as that is kinda how the
         # whole long polling things works :)
@@ -188,25 +191,38 @@ def main():
             # Send the request
             response = requests.get(
                 static_values.telegram_api_endpoint.format(
-                    token = API_TOKEN,
+                    token = api_token,
                     method = 'getUpdates',
                     options = urllib.urlencode({
-                        'offset': LAST_REQUEST_ID,
+                        'offset': last_request_id,
                         'limit': 100,
-                        'timeout': LONG_POLL_TIME
+                        'timeout': long_poll_time
                     })
                 ),
-                timeout = LONG_POLL_TIME,
+                timeout = long_poll_time,
                 headers = static_values.headers
             )
 
             logger.debug('Request was made to url: {url}'.format(
-                url = response.url).replace(API_TOKEN, '[api-key-redact]'))
+                url = response.url).replace(api_token, '[api-key-redact]'))
 
+        # Catch a timeout. This is the core of how the long
+        # poll actually works.
         except requests.exceptions.Timeout, e:
 
             # The long poll should just be refreshed
             logger.debug('Request timed out: {error}'.format(error = str(e)))
+            continue
+
+        # Any connection related error, we can retry after
+        # we have waited for dust to settle.
+        except requests.exceptions.ConnectionError, e:
+
+            print ' * Error! Connection to Telegram failed with: {error}'.format(
+                error = str(e))
+
+            # Start the wait
+            wait()
             continue
 
         # Check that the request was actually successful
@@ -251,7 +267,8 @@ def main():
         # in the next long poll so that we only receive new
         # messages
         max_request_id = max([x['update_id'] for x in response_data['result']])
-        LAST_REQUEST_ID =  max_request_id + 1 if ((max_request_id + 1) >= LAST_REQUEST_ID) else LAST_REQUEST_ID
+        last_request_id =  max_request_id + 1 \
+            if ((max_request_id + 1) >= last_request_id) else last_request_id
 
         # Start a response handler for every message received
         # in the long poll. We make use of a pool that will
