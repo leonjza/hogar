@@ -105,6 +105,10 @@ def _learn(text):
     request_key = text.split('as', 1)[0].strip()
     request_value = text.split('as', 1)[1].strip()
 
+    # the key 'all' is reserved
+    if request_key == 'all':
+        return 'The key \'all\' is reserved. Please choose another'
+
     # Check if we don't already have this value
     try:
         values = LearnValue.select().join(LearnKey).where(LearnValue.value == request_value).get()
@@ -173,6 +177,22 @@ def _show(text):
 
         @return string
     '''
+
+    # Check if we should show all the keys
+    # that we know of
+    if text == 'all':
+
+        if (LearnKey.select().count()) <= 0:
+            return 'I currently don\'t know anything.'
+
+        response = ' I currently know about:\n\n'
+
+        for k in LearnKey.select():
+            response += '(#{id}) {key}\n'.format(
+                id = k.id,
+                key = k.name)
+
+        return response
 
     # Check if we have this value
     values = [v.value for v in LearnValue.select().join(LearnKey).where(LearnKey.name == text)]
