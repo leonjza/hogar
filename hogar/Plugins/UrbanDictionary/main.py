@@ -157,8 +157,10 @@ def run(message):
 
     except Exception, e:
 
-        logger('Failed to extract definition and example with error: {error}'.format(
+        logger.error('Failed to extract definition and example with error: {error}'.format(
             error = str(e)))
+
+        return 'Unable to parse response. See logs for more details.'
 
     # Construct the final response message
     final_definition = '{term} is:\n\n * Definition: {definition}\n\n * Example: {example}'.format(
