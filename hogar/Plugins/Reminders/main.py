@@ -23,6 +23,8 @@
 ''' A Simple Reminder Plugin '''
 
 from recurrent import RecurringEvent
+from dateutil.rrule import rrulestr
+import arrow
 import datetime
 import time
 import json
@@ -64,7 +66,7 @@ def commands():
         @return list
     '''
 
-    return ['remind', 'reminder']
+    return ['reminder', 'remind']
 
 def should_reply():
 
@@ -140,7 +142,7 @@ def _extract_parts(text):
     action_recipient = text.split(' ')[0].strip()
 
     # Ensure that the action is something we understand
-    if action_recipient not in ['me', 'us', 'show', 'stop']:
+    if action_recipient not in ['me', 'us', 'show', 'stop', 'help']:
 
         parts['error'] = True
         parts['error_message'] = 'Unknown command: {c}'.format(
@@ -151,7 +153,7 @@ def _extract_parts(text):
 
     # We are happy with the action. show and stop
     # actions dont care about the rest
-    if action_recipient in ['show', 'stop']:
+    if action_recipient in ['show', 'stop', 'help']:
 
         parts['action'] = action_recipient
         return parts
@@ -263,10 +265,166 @@ def _set_recurring_reminder(r, orig_message):
     RemindRecurring.create(
         orig_message = json.dumps(orig_message),
         rrules = r['parsed_time'],
+        next_run = rrulestr(r['parsed_time'],
+            dtstart = datetime.datetime.now()).after(datetime.datetime.now()),
         message = r['message']
     )
 
     return
+
+def _show_all_reminders(message):
+
+    '''
+        Show All Reminders
+
+        Returns all of the reminders for the appropriate
+        chat ID that the message came from
+
+        --
+        @param  message:dict    The message sent by the user
+
+        @return str
+    '''
+
+    response = '\n# One time reminders:\n\n'
+
+    for reminder in RemindOnce.select().where(RemindOnce.sent == 0, \
+                RemindOnce.time >= datetime.datetime.now()):
+
+        orig_message = json.loads(reminder.orig_message)
+        if orig_message['chat']['id'] == message['chat']['id']:
+            response += '(#{id}) {human} @{time} | {message}\n'.format(
+                id = reminder.id,
+                human = arrow.get(reminder.time, 'Africa/Johannesburg').humanize(),
+                time = str(reminder.time),
+                message = reminder.message[:20] + '...' \
+                    if len(reminder.message) > 20 else reminder.message)
+
+    response += '\n# Recurring reminders:\n\n'
+
+    for reminder in RemindRecurring.select().where(RemindRecurring.sent == 0, \
+        RemindRecurring.next_run >= datetime.datetime.now()):
+
+        orig_message = json.loads(reminder.orig_message)
+        if orig_message['chat']['id'] == message['chat']['id']:
+            response += '(#{id}) {human} @{next_run} | {message}\n'.format(
+                id = reminder.id,
+                human = arrow.get(reminder.next_run, 'Africa/Johannesburg').humanize(),
+                next_run = str(reminder.next_run),
+                message = reminder.message[:20] + '...' \
+                    if len(reminder.message) > 20 else reminder.message)
+
+    return response
+
+def _stop_reminder(message):
+
+    '''
+        Stop A Reminder
+
+        Sets a reminder as sent so that it will not run
+        again. This function also ensures that the
+        reminder's chatID matches the chatID of
+        the user requesting the stop
+
+        --
+        @param  message:dict    The message sent by the user
+
+        @return str
+    '''
+
+    # Remove the command form the text
+    text = message['text'].replace('remind stop', '').strip()
+
+    # Split the remainder of the text into 2 parts.
+    # We are expecting either 'once' or 'recurring'
+    # as the type of reminder and a number
+    parts_list = text.split(' ')
+
+    # Check the length of the list and assume a typo
+    # if its not 2
+    if len(parts_list) != 2:
+        return 'Could not understand what you wanted. Expecting:\n' + \
+            'remind stop [once/recurring] [message number]'
+
+    message_type = parts_list[0]
+    message_number = parts_list[1]
+
+    # Check that we got once or recurring
+    if message_type not in ['once', 'recurring']:
+        return 'Could not figure out which message type you are referring to. ' + \
+            'Expected \'once\' / \'recurring\''
+
+    # For once time messages, perform the chatID check
+    # and mark the message as sent if its ok
+    if message_type == 'once':
+
+        try:
+            m = RemindOnce.select().where(RemindOnce.id == message_number).get()
+
+            if json.loads(m.orig_message)['chat']['id'] == message['chat']['id']:
+
+                m.sent = 1
+                m.save()
+
+            else:
+
+                logger.warning('User {id} tried to disable a reminder they dont own'.format(
+                    id = message['chat']['id']))
+                return 'That message number does not exist or you dont own it.'
+
+        except RemindOnce.DoesNotExist, e:
+            return 'That message number does not exist or you dont own it.'
+
+        return 'Done stopping the one time reminder'
+
+    # The same here for the recurring message.
+    if message_type == 'recurring':
+
+        try:
+            m = RemindRecurring.select().where(RemindRecurring.id == message_number).get()
+
+            if json.loads(m.orig_message)['chat']['id'] == message['chat']['id']:
+
+                m.sent = 1
+                m.save()
+
+            else:
+
+                logger.warning('User {id} tried to disable a reminder they dont own'.format(
+                    id = message['chat']['id']))
+                return 'That message number does not exist or you dont own it.'
+
+        except RemindRecurring.DoesNotExist, e:
+            return 'That message number does not exist or you dont own it.'
+
+        return 'Done stopping the recurring reminder'
+
+    # We will most probably never get here, but
+    # just in case...
+    return 'Nothing happend...'
+
+def _show_help(message):
+
+    '''
+        Show Help
+
+        Shows usage help
+
+        --
+
+        @return None
+    '''
+
+    h = '\n# Reminder Plugin Help:\n'
+    h += 'Commands Sytax:\n'
+    h += 'remind [ me / show / stop / help ] [once/every] [time], [message]\n\n'
+    h += 'Descriptions:\n'
+    h += ' - me     : set a reminder for the current chat\n'
+    h += ' - show   : show all reminders\n'
+    h += ' - stop   : stop a reminder\n'
+    h += ' - help   : show this help\n'
+
+    return h
 
 def run(message):
 
@@ -316,13 +474,25 @@ def run(message):
     # If there was an error with the message, show it
     if parts['error']:
 
-        format_help = 'remind [recipient /(show/stop)] [once/every] [time]: [message]'
-        error_message = 'Reminder not set. Error was: {e}.\n\nReminder format is: {f}'.format(
+        error_message = 'Reminder not set. Error was: {e}.\n\n{help}'.format(
             e = parts['error_message'],
-            f = format_help
+            help = _show_help(None)
         )
 
         return error_message
+
+    # Handle a few control commands that should show
+    # stop or display help for this plugin
+    if parts['action'] in ['show', 'stop', 'help']:
+
+        handle_action = {
+            'show' : _show_all_reminders,
+            'stop' : _stop_reminder,
+            'help' : _show_help,
+        }
+
+        # Handle and return the returned message
+        return handle_action[parts['action']](message)
 
     # Fake a small case-like statement for the once or
     # every message types
