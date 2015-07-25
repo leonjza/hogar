@@ -75,6 +75,23 @@ python start.py
 ## plugins
 Hogar as it is does not do much. Almost all of the functionality is added via plugins. Writing a plugin for Hogar is also very easy. The smallest of plugin should provide roughly 4 functions, one of which is a `run()` method. Samples may be found in the [hogar/Plugins](https://github.com/leonjza/hogar/tree/master/hogar/Plugins) directory.
 
+### packaged plugins
+Hogar comes with a few plugins by default. The current list of plugins are:
+
+Name                | Description                                                              | Sample
+------------------- | ------------------------------------------------------------------------ | ---------
+Acl                 | A simple access control system to control who may speak to the bot       | None
+Echo                | A simple Echo bot                                                        | `echo help`
+Insult              | Responds with a random insult                                            | `insult`
+Learn               | A simple key value storage system. Learn something now, show it later    | `learn bacon as yum!`
+Logger              | Logs chats / groups chats to a database table                            | None
+Ping                | Reply with a pong                                                        | `ping`
+Reminders           | Set reminds. Hogar uses an internal scheduler to send them later         | `remind me once tommorrow, book a flight!`
+Urban Dictionary    | Lookup definitions via urban dictionary                                  | `whatis yolo`
+
+### writing your own
+To get the most out of Hogar, you are encouraged to write your own plugins!
+
 ##### plugin basics
 As previously mentioned, all a plugin really is, is a set of functions defining a few characteristics of the plugin. The [sample plugin](https://github.com/leonjza/hogar/blob/master/hogar/Plugins/sample.py) is heavily documented and may also referred to if needed.
 
