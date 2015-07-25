@@ -28,12 +28,16 @@ import arrow
 import datetime
 import time
 import json
+import ConfigParser
 
 from hogar.Models.RemindOnce import RemindOnce
 from hogar.Models.RemindRecurring import RemindRecurring
 
 import logging
 logger = logging.getLogger(__name__)
+
+config = ConfigParser.ConfigParser()
+config.read('settings.ini')
 
 def applicable_types():
 
@@ -124,7 +128,7 @@ def _extract_parts(text):
     # With the above examples, we can say that the
     # format should follow the following:
     #
-    # [script init] [recipient /(show/stop)] [once/every] [time]: [message]
+    # [script init] [set / show /stop / help] [once/every] [time]: [message]
 
     parts = {
 
@@ -142,7 +146,7 @@ def _extract_parts(text):
     action_recipient = text.split(' ')[0].strip()
 
     # Ensure that the action is something we understand
-    if action_recipient not in ['me', 'us', 'show', 'stop', 'help']:
+    if action_recipient not in ['set', 'show', 'stop', 'help']:
 
         parts['error'] = True
         parts['error_message'] = 'Unknown command: {c}'.format(
@@ -295,7 +299,8 @@ def _show_all_reminders(message):
         if orig_message['chat']['id'] == message['chat']['id']:
             response += '(#{id}) {human} @{time} | {message}\n'.format(
                 id = reminder.id,
-                human = arrow.get(reminder.time, 'Africa/Johannesburg').humanize(),
+                human = arrow.get(reminder.time,
+                    config.get('reminder', 'timezone', 'UTC')).humanize(),
                 time = str(reminder.time),
                 message = reminder.message[:20] + '...' \
                     if len(reminder.message) > 20 else reminder.message)
@@ -309,7 +314,8 @@ def _show_all_reminders(message):
         if orig_message['chat']['id'] == message['chat']['id']:
             response += '(#{id}) {human} @{next_run} | {message}\n'.format(
                 id = reminder.id,
-                human = arrow.get(reminder.next_run, 'Africa/Johannesburg').humanize(),
+                human = arrow.get(reminder.next_run,
+                    config.get('reminder', 'timezone', 'UTC')).humanize(),
                 next_run = str(reminder.next_run),
                 message = reminder.message[:20] + '...' \
                     if len(reminder.message) > 20 else reminder.message)
@@ -417,9 +423,9 @@ def _show_help(message):
 
     h = '\n# Reminder Plugin Help:\n'
     h += 'Commands Sytax:\n'
-    h += 'remind [ me / show / stop / help ] [once/every] [time], [message]\n\n'
+    h += 'remind [ set / show / stop / help ] [once/every] [time], [message]\n\n'
     h += 'Descriptions:\n'
-    h += ' - me     : set a reminder for the current chat\n'
+    h += ' - set    : set a reminder for the current chat\n'
     h += ' - show   : show all reminders\n'
     h += ' - stop   : stop a reminder\n'
     h += ' - help   : show this help\n'

@@ -23,3 +23,6 @@ database_location = var/data.sqlite.db
 
 [advanced]
 long_poll_time = 60
+
+[reminder]
+timezone = Africa/Johannesburg
