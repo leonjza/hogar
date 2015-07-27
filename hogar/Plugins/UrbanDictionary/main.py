@@ -163,7 +163,7 @@ def run(message):
         return 'Unable to parse response. See logs for more details.'
 
     # Construct the final response message
-    final_definition = '{term} is:\n\n * Definition: {definition}\n\n * Example: {example}'.format(
+    final_definition = u'{term} is:\n\n * Definition: {definition}\n\n * Example: {example}'.format(
             term = text,
             definition = definition,
             example = example)
