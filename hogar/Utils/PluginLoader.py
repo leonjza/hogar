@@ -50,9 +50,8 @@ def get_plugins():
     logger.debug('Searching for plugins in: {path}'.format(path = plugin_path))
 
     plugins = []
-    possibleplugins = os.listdir(plugin_path)
 
-    for i in possibleplugins:
+    for i in os.listdir(plugin_path):
 
         logger.debug('Inspecting possible plugin: {plugin}'.format(plugin = i))
         location = os.path.join(plugin_path, i)
@@ -66,6 +65,33 @@ def get_plugins():
         plugins.append({ 'name': i, 'info': info })
 
     return plugins
+
+def find_plugin(name):
+
+    '''
+        Find Plugin
+
+        Scans a directory and attempts to find a
+        specific plugin
+
+        --
+        @param name:str     The name of the plugin to find
+
+        @return dict
+    '''
+
+    logger.debug('Finding plugin {plugin}'.format(
+        plugin = name))
+
+    for i in os.listdir(plugin_path):
+
+        if i == name:
+
+            location = os.path.join(plugin_path, i)
+            info = imp.find_module(plugin_enty, [location])
+            return { 'name': i, 'info': info }
+
+    return
 
 def load_plugin(plugin):
 
@@ -179,7 +205,6 @@ def prepare_plugins():
         # load the commands into the command_map
         for message_type in plugin_applicable_types:
             command_map[message_type].append({
-                'plugin' : plugin_test,
                 'name' : plugin['name'],
                 'commands' : plugin_commands
             })

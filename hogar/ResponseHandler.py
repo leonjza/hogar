@@ -238,8 +238,23 @@ class Response(object):
                     message_id = self.response['message_id']
                 ))
 
+                logger.debug('Loading plugin: {plugin}'.format(
+                    plugin = plugin['name']))
+
+                # Find and Load the plugin from the file
+                plugin_on_disk = PluginLoader.find_plugin(plugin['name'])
+                loaded_plugin = PluginLoader.load_plugin(plugin_on_disk)
+
+                # If we got None from the load, error out
+                if not load_plugin:
+
+                    logger.critical('Loading plugin {name} returned nothing.'.format(
+                        name = plugin['name']))
+
+                    continue
+
                 # Run the plugins run() method
-                plugin_output = plugin['plugin'].run(self.response)
+                plugin_output = loaded_plugin.run(self.response)
 
             except Exception, e:
 
@@ -252,14 +267,17 @@ class Response(object):
 
             # If we should be replying to the message,
             # do it.
-            if (plugin['plugin'].should_reply()):
+            if (loaded_plugin.should_reply()):
 
                 # Check what the reply type should be. Plugins
                 # that don't specify one will default to text
                 reply_type = 'text'
-                if hasattr(plugin['plugin'], 'reply_type'):
-                    reply_type = plugin['plugin'].reply_type()
+                if hasattr(loaded_plugin, 'reply_type'):
+                    reply_type = loaded_plugin.reply_type()
 
                 Telegram.send_message(self.sender_information, reply_type, plugin_output)
+
+            # GC the loaded_plugin
+            loaded_plugin = None
 
         return
