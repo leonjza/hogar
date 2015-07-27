@@ -246,7 +246,7 @@ class Response(object):
                 loaded_plugin = PluginLoader.load_plugin(plugin_on_disk)
 
                 # If we got None from the load, error out
-                if not load_plugin:
+                if not loaded_plugin:
 
                     logger.critical('Loading plugin {name} returned nothing.'.format(
                         name = plugin['name']))
