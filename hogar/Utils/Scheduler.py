@@ -25,6 +25,8 @@ import schedule
 import time
 import traceback
 import functools
+import os
+import sys
 
 from hogar.Jobs import Reminder
 
@@ -34,7 +36,7 @@ logger = logging.getLogger(__name__)
 # The schedule package is pretty noisy. Reduce that.
 logging.getLogger('schedule').setLevel(logging.WARNING)
 
-def scheduler_init():
+def scheduler_init(parent):
 
     '''
         Schedule Init
@@ -43,6 +45,8 @@ def scheduler_init():
         ticks every second.
 
         --
+        @param  parent:int  The PID of the parent.
+
         @return void
     '''
 
@@ -54,12 +58,22 @@ def scheduler_init():
     # every second
     while True:
 
+        # Check if the current parent pid matches the original
+        # parent that started us. If not, we should end.
+        if os.getppid() != parent:
+
+            logger.error(
+                'Killing scheduler as it has become detached from parent PID.')
+
+            sys.exit(1)
+
+        # Run the schedule
         schedule.run_pending()
         time.sleep(1)
 
     return
 
-def boot():
+def boot(ppid):
 
     '''
         Boot
@@ -67,13 +81,15 @@ def boot():
         Starts the Scheduler
 
         --
+        @param  ppid:int    The PID of the parent.
+
         @return None
     '''
 
     pool = Pool(processes=1)
     logger.debug('Started scheduler pool with 1 process')
 
-    pool.apply_async(scheduler_init)
+    pool.apply_async(scheduler_init, args=(ppid,))
     logger.debug('Started async scheduler_init()')
 
     return

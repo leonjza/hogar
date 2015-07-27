@@ -84,6 +84,9 @@ def banner():
 |___|  /\____/\___  (____  /__|
      \/      /_____/     \/
                    v{v} - @leonjza
+
+    WARNING     This method will be deprecated soon in favour
+    WARNING     of the daemonized version in hogarctl
     '''.format(v = static_values.version)
     return
 
@@ -327,7 +330,7 @@ if __name__ == '__main__':
     )
 
     print ' * Booting the scheduler'
-    Scheduler.boot()
+    Scheduler.boot(os.getpid())
 
     print ' * Starting long poll to the Telegram API'
     main()
