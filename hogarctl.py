@@ -146,10 +146,6 @@ if __name__ == '__main__':
         elif sys.argv[1] == 'stop':
             app.stop()
 
-        # Restart the daemon
-        elif sys.argv[1] == 'restart':
-            app.restart()
-
         else:
             print ' * Supported arguments are: start|stop|restart|setupdb|debug'
             sys.exit(0)
