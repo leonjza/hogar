@@ -57,7 +57,7 @@ Depending on your database setup, the last message may differ.
 Thats it. Start the bot with:
 
 ```bash
-python start.py
+$ python start.py
 
 .__
 |  |__   ____   _________ _______
@@ -71,6 +71,28 @@ python start.py
  * Loaded plugins for 8 message types: document; text; sticker; contact; video; location; photo; audio
  * Starting long poller
 ```
+
+Ideally, you will want to start Hogar as a long running Daemon. For this, `hogarctl.py` can be used.
+
+```bash
+$ python hogarctl.py start
+
+.__
+|  |__   ____   _________ _______
+|  |  \ /  _ \ / ___\__  \\_  __ \
+|   Y  (  <_> ) /_/  > __ \|  | \/
+|___|  /\____/\___  (____  /__|
+     \/      /_____/     \/
+                   v0.1 - @leonjza
+
+ * Loading plugins...
+ * Loaded plugins for 8 message types: document; text; sticker; contact; video; location; photo; audio
+ * Starting Daemon
+Starting...
+Started
+```
+
+This will detach Hogar form the controlling terminal and run in as a Daemon. This is currently experimental, and still needs to be tested properly. Of course, the user you run hogar as should not be `root`!
 
 ## plugins
 Hogar as it is does not do much. Almost all of the functionality is added via plugins. Writing a plugin for Hogar is also very easy. The smallest of plugin should provide roughly 4 functions, one of which is a `run()` method. Samples may be found in the [hogar/Plugins](https://github.com/leonjza/hogar/tree/master/hogar/Plugins) directory.
