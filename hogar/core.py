@@ -47,15 +47,14 @@ config.read('settings.ini')
 
 logger = logging.getLogger(__name__)
 
-def pickle_response_handler(response, command_map):
+def response_handler(response, command_map):
 
     '''
-        Pickle Response Handler
+        Response Handler
 
-        A small helper function that calls the App
-        class' response_handler method. This is needed
-        so that the async_task has something that is
-        in a picklable state -_-
+        Mediates an async task hadoff to the plugin manager.
+        This function relies on the global command_map
+        to know which plugins are available for use.
 
         --
         @param  response:dict       The parsed Telegram response object.
@@ -64,7 +63,23 @@ def pickle_response_handler(response, command_map):
         @return None
     '''
 
-    App.response_handler(response, command_map)
+    try:
+
+        logger.debug('Starting response_handler for update ID {id}'.format(
+            id = response['update_id']))
+
+        handle = ResponseHandler.Response(response, command_map)
+
+        # Check if the ACL system is enabled and or if
+        # the user is allowed to send this bot messages
+        if handle.check_acl():
+
+            handle.run_plugins()
+
+    except Exception, e:
+
+        traceback.print_exc()
+        raise e
 
     return
 
@@ -115,43 +130,6 @@ class App(Daemon.Daemon):
             time = t))
 
         time.sleep(t)
-
-        return
-
-    @staticmethod
-    def response_handler(response, command_map):
-
-        '''
-            Response Handler
-
-            Mediates an async task hadoff to the plugin manager.
-            This function relies on the global command_map
-            to know which plugins are available for use.
-
-            --
-            @param  response:dict       The parsed Telegram response object.
-            @param  command_map:dict    The parsed commands available.
-
-            @return None
-        '''
-
-        try:
-
-            logger.debug('Starting response_handler for update ID {id}'.format(
-                id = response['update_id']))
-
-            handle = ResponseHandler.Response(response, command_map)
-
-            # Check if the ACL system is enabled and or if
-            # the user is allowed to send this bot messages
-            if handle.check_acl():
-
-                handle.run_plugins()
-
-        except Exception, e:
-
-            traceback.print_exc()
-            raise e
 
         return
 
@@ -300,7 +278,7 @@ class App(Daemon.Daemon):
             for message in response_data['result']:
 
                 # Pop a worker in the pool
-                pool.apply_async(pickle_response_handler,
+                pool.apply_async(response_handler,
                     args=(message, self.command_map,))
 
             # Close and join the results.
