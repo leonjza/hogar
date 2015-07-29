@@ -26,6 +26,21 @@ import ConfigParser
 import logging
 logger = logging.getLogger(__name__)
 
+def enabled():
+
+    '''
+        Enabled
+
+        Is this plugin enabled. Returning false here
+        will cause this plugin to be ignored by the
+        framework entirely.
+
+        --
+        @return bool
+    '''
+
+    return True
+
 def applicable_types():
 
     '''

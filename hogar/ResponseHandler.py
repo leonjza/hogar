@@ -29,6 +29,8 @@ import traceback
 import logging
 logger = logging.getLogger(__name__)
 
+config = ConfigParser.ConfigParser()
+
 class Response(object):
 
     '''
@@ -191,7 +193,6 @@ class Response(object):
         # Read the configuration file. We do this here as the
         # acls may have changed since the last time this
         # module was loaded
-        config = ConfigParser.ConfigParser()
         config.read('settings.ini')
 
         message_from_id = str(self.response['from']['id'])
@@ -228,15 +229,32 @@ class Response(object):
             logger.warning('No plugins matched for this message.')
             return
 
-        #TODO: Handle if no plugins are applicable!
+        # Check with the ACL system what the status is of
+        # the user that has sent the message
+        can_send = self.check_acl()
+
+        # Load the plugins from the configuration that
+        # should not have ACL rules applied to them
+        config.read('settings.ini')
+        acl_free_plugins = [x.strip() \
+            for x in config.get('advanced', 'no_acl_plugins', '').split(',')]
+
         for plugin in self.plugins:
 
+            # Check that we are allowed to run this plugin. It
+            # should either be bypassed from the ACL system
+            # using settings.ini, or the user is allowed
+            # to run plugins
+            if not plugin['name'] in acl_free_plugins and not can_send:
+                continue
+
+            # Getting here, we should run this plugin.
+            # Do it!
             try:
 
                 logger.info('Running plugin: {plugin} for message {message_id}'.format(
                     plugin = plugin['name'],
-                    message_id = self.response['message_id']
-                ))
+                    message_id = self.response['message_id']))
 
                 logger.debug('Loading plugin: {plugin}'.format(
                     plugin = plugin['name']))
@@ -261,8 +279,8 @@ class Response(object):
                 logger.error('Plugin {plugin} failed with: {error}: {trace}'.format(
                     plugin = plugin['name'],
                     error = str(e),
-                    trace = traceback.print_exc()
-                ))
+                    trace = traceback.print_exc()))
+
                 continue
 
             # If we should be replying to the message,

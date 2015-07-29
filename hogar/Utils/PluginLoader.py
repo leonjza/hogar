@@ -153,6 +153,16 @@ def prepare_plugins():
 
             continue
 
+        # Check if the plugin is set to enabled
+        if hasattr(plugin_test, 'enabled'):
+            if not plugin_test.enabled():
+                logger.error('Skipping plugin {name}. enabled() is \'false\''.format(
+                    name = plugin['name']))
+                continue
+        else:
+            logger.warning('Plugin {plugin} does not specify a status. Defaulting to \'enabled\''.format(
+                plugin = plugin['name']))
+
         # Check the command list
         if not isinstance(plugin_commands, list):
             logger.error('Skipping plugin {name}. Commands should be returned as a list in commands()'.format(

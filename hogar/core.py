@@ -69,12 +69,7 @@ def response_handler(response, command_map):
             id = response['update_id']))
 
         handle = ResponseHandler.Response(response, command_map)
-
-        # Check if the ACL system is enabled and or if
-        # the user is allowed to send this bot messages
-        if handle.check_acl():
-
-            handle.run_plugins()
+        handle.run_plugins()
 
     except Exception, e:
 

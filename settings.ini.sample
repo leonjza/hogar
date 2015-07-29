@@ -23,6 +23,7 @@ database_location = var/data.sqlite.db
 
 [advanced]
 long_poll_time = 60
+no_acl_plugins = Logger, Ping
 
 [reminder]
 timezone = Africa/Johannesburg
