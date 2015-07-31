@@ -20,13 +20,15 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import os
 from peewee import *
 from playhouse.pool import PooledMySQLDatabase
 from playhouse.sqlite_ext import SqliteExtDatabase
 import ConfigParser
 
 config = ConfigParser.ConfigParser()
-config.read('settings.ini')
+config.read(
+    os.path.join(os.path.dirname(__file__), '../../settings.ini'))
 
 db_engine = config.get('main', 'db_engine')
 
