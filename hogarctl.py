@@ -90,7 +90,8 @@ if __name__ == '__main__':
         migrations that may be outstanding.
     '''
 
-    banner()
+    if 'quiet' not in sys.argv:
+        banner()
 
     # prepare a db setup command
     if len(sys.argv) > 1 :
@@ -113,16 +114,18 @@ if __name__ == '__main__':
         # to keep the controlling terminal attached
         elif sys.argv[1] == 'start' or sys.argv[1] == 'debug':
 
-            print ' * Loading plugins...'
+            if 'quiet' not in sys.argv:
+                print ' * Loading plugins...'
             command_map = PluginLoader.prepare_plugins()
 
             if not command_map:
                 print ' * No plugins found. Aborting.'
                 sys.exit(1)
 
-            print ' * Loaded plugins for {number} message types: {commands}'.format(
-                number = len(command_map.keys()),
-                commands = '; '.join(command_map.keys()))
+            if 'quiet' not in sys.argv:
+                print ' * Loaded plugins for {number} message types: {commands}'.format(
+                    number = len(command_map.keys()),
+                    commands = '; '.join(command_map.keys()))
 
             # Pass the checked command map to the instance
             # of Hogar
@@ -131,12 +134,14 @@ if __name__ == '__main__':
             # Decide if we should daemonize or stay attached
             if sys.argv[1] == 'start':
 
-                print ' * Starting Daemon'
+                if 'quiet' not in sys.argv:
+                    print ' * Starting Daemon'
                 app.start()
 
             else:
 
-                print ' * Staying in foreground'
+                if 'quiet' not in sys.argv:
+                    print ' * Staying in foreground'
                 app.run()
 
         # Check the status of the daemon
