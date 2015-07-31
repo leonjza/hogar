@@ -30,7 +30,7 @@ class values(object):
         change and take affect app wide.
     '''
 
-    version = '0.1'
+    version = '1.0'
     telegram_api_endpoint = 'https://api.telegram.org/bot{token}/{method}?{options}'
     headers = {
         'Content-type': 'application/json',
