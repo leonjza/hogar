@@ -22,6 +22,7 @@
 
 ''' An access control plugin '''
 
+import os
 import ConfigParser
 import logging
 logger = logging.getLogger(__name__)
@@ -116,7 +117,8 @@ def run(message):
 
     # Read the configuration as the plugin is run()
     config = ConfigParser.ConfigParser()
-    config.read('settings.ini')
+    config.read(
+        os.path.join(os.path.dirname(__file__), '../../../settings.ini'))
 
     config_owners = config.get('acl', 'owners', '').split(',')
     config_users = config.get('acl', 'users', '').split(',')
@@ -176,7 +178,8 @@ def run(message):
         )
 
     # Write the confuration changes
-    with open('settings.ini', 'wb') as s:
+    with open(
+        os.path.join(os.path.dirname(__file__), '../../../settings.ini'), 'wb') as s:
         config.write(s)
 
     return status

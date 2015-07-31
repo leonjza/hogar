@@ -24,6 +24,7 @@
 
 from recurrent import RecurringEvent
 from dateutil.rrule import rrulestr
+import os
 import arrow
 import datetime
 import time
@@ -37,7 +38,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 config = ConfigParser.ConfigParser()
-config.read('settings.ini')
+config.read(
+    os.path.join(os.path.dirname(__file__), '../../../settings.ini'))
 
 def enabled():
 

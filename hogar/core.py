@@ -43,7 +43,8 @@ from hogar import ResponseHandler
 
 # read the required configuration
 config = ConfigParser.ConfigParser()
-config.read('settings.ini')
+config.read(
+    os.path.join(os.path.dirname(__file__), '../settings.ini'))
 
 logger = logging.getLogger(__name__)
 

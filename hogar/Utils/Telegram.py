@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+import os
 import requests
 import urllib
 import ConfigParser
@@ -29,7 +30,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 config = ConfigParser.ConfigParser()
-config.read('settings.ini')
+config.read(
+    os.path.join(os.path.dirname(__file__), '../../settings.ini'))
 
 API_TOKEN = config.get('main', 'bot_access_token', '')
 

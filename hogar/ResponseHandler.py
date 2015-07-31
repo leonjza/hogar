@@ -26,6 +26,7 @@ from hogar.Utils import Telegram
 import ConfigParser
 import traceback
 
+import os
 import logging
 logger = logging.getLogger(__name__)
 
@@ -193,7 +194,8 @@ class Response(object):
         # Read the configuration file. We do this here as the
         # acls may have changed since the last time this
         # module was loaded
-        config.read('settings.ini')
+        config.read(
+            os.path.join(os.path.dirname(__file__), '../settings.ini'))
 
         message_from_id = str(self.response['from']['id'])
 
@@ -235,7 +237,8 @@ class Response(object):
 
         # Load the plugins from the configuration that
         # should not have ACL rules applied to them
-        config.read('settings.ini')
+        config.read(
+            os.path.join(os.path.dirname(__file__), '../settings.ini'))
         acl_free_plugins = [x.strip() \
             for x in config.get('advanced', 'no_acl_plugins', '').split(',')]
 

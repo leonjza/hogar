@@ -38,7 +38,8 @@ from hogar.core import App
 
 # read the required configuration
 config = ConfigParser.ConfigParser()
-config.read('settings.ini')
+config.read(
+    os.path.join(os.path.dirname(__file__), 'settings.ini'))
 
 # set up logging to file
 logging.basicConfig(
