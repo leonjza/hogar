@@ -111,7 +111,7 @@ Hogar has some features built in that will discover your plugin when it boots up
 
 If all of these conditions are met, the plugin loader will register the `commands` and message `types` that your plugin applies to and make it available to all messages that come in.
 
-##### special not about the ACL plugin
+##### special notes about the ACL plugin
 The ACL plugin allows you to control who is allowed to interact with your bot. Adding a user to the allowed list is as simple as sharing the contact with the bot (assuming the ACL plugin is enabled). It is possible to write plugins that bypass the ACL plugin (such as the Logger example). In order for the bypass to take affect, add the full plugin name to the `settings.ini` file under the `[advanced]` section as a comma seperated list for `no_acl_plugins`. by default, the Logger plugin will not be blocked by the ACL system.
 
 ##### plugin writing tips
