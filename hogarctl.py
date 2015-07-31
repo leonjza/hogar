@@ -65,7 +65,7 @@ def banner():
         @return None
     '''
 
-    print '''
+    return '''
 .__
 |  |__   ____   _________ _______
 |  |  \ /  _ \ / ___\__  \\\\_  __ \\
@@ -74,6 +74,22 @@ def banner():
      \/      /_____/     \/
                    v{v} - @leonjza
     '''.format(v = static_values.version)
+
+def qprint(message):
+
+    '''
+        QPrint
+
+        Print a message if we do not have the 'quiet'
+        argument
+
+        --
+        @return None
+    '''
+
+    if 'quiet' not in sys.argv:
+        print message
+
     return
 
 
@@ -90,8 +106,7 @@ if __name__ == '__main__':
         migrations that may be outstanding.
     '''
 
-    if 'quiet' not in sys.argv:
-        banner()
+    qprint(banner())
 
     # prepare a db setup command
     if len(sys.argv) > 1 :
@@ -114,18 +129,16 @@ if __name__ == '__main__':
         # to keep the controlling terminal attached
         elif sys.argv[1] == 'start' or sys.argv[1] == 'debug':
 
-            if 'quiet' not in sys.argv:
-                print ' * Loading plugins...'
+            qprint(' * Loading plugins...')
             command_map = PluginLoader.prepare_plugins()
 
             if not command_map:
-                print ' * No plugins found. Aborting.'
+                qprint(' * No plugins found. Aborting.')
                 sys.exit(1)
 
-            if 'quiet' not in sys.argv:
-                print ' * Loaded plugins for {number} message types: {commands}'.format(
-                    number = len(command_map.keys()),
-                    commands = '; '.join(command_map.keys()))
+            qprint(' * Loaded plugins for {number} message types: {commands}'.format(
+                number = len(command_map.keys()),
+                commands = '; '.join(command_map.keys())))
 
             # Pass the checked command map to the instance
             # of Hogar
@@ -134,14 +147,12 @@ if __name__ == '__main__':
             # Decide if we should daemonize or stay attached
             if sys.argv[1] == 'start':
 
-                if 'quiet' not in sys.argv:
-                    print ' * Starting Daemon'
+                qprint(' * Starting Daemon')
                 app.start()
 
             else:
 
-                if 'quiet' not in sys.argv:
-                    print ' * Staying in foreground'
+                qprint(' * Staying in foreground')
                 app.run()
 
         # Check the status of the daemon
