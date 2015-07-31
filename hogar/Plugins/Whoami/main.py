@@ -110,4 +110,7 @@ def run(message):
         @return str
     '''
 
-    return 'Your Telegram ID is: {id}'.format(id = message['from']['id'])
+
+    return 'Your Telegram ID is: {fromID}\nThis chatID is: {chatID}'.format(
+        fromID = message['from']['id'],
+        chatID = message['chat']['id'])
