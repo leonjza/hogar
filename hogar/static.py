@@ -33,8 +33,7 @@ class values(object):
     version = '1.0'
     telegram_api_endpoint = 'https://api.telegram.org/bot{token}/{method}?{options}'
     headers = {
-        'Content-type': 'application/json',
-        'Accept': 'text/plain'
+        'Accept': 'application/json'
     }
     possible_message_types = [
         'text', 'audio', 'document', 'photo', 'sticker', 'video', 'contact', 'location'
