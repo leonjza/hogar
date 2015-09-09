@@ -88,6 +88,7 @@ Name                | Description                                               
 ------------------- | ------------------------------------------------------------------------ | ---------
 Acl                 | A simple access control system to control who may speak to the bot       | None
 Echo                | A simple Echo bot                                                        | `echo help`
+GoogleImage         | Get a random Image from Google                                           | `img google`
 Insult              | Responds with a random insult                                            | `insult`
 Learn               | A simple key value storage system. Learn something now, show it later    | `learn bacon as yum!`
 Logger              | Logs chats / groups chats to a database table                            | None
