@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+import os
 
 class values(object):
     '''
@@ -30,6 +31,8 @@ class values(object):
     '''
 
     version = '1.1'
+    data_dir = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '../var/'))
     telegram_api_endpoint = 'https://api.telegram.org/bot{token}/{method}?{options}'
     headers = {
         'Accept': 'application/json'

@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import re
+import urlparse
+from os.path import splitext
 
 def ignore_case_replace (search, replace, string, occurance = 1):
     '''
@@ -36,3 +38,15 @@ def ignore_case_replace (search, replace, string, occurance = 1):
     # We keep replacing the result as there could be more
     # than one keyword to work with
     return insensitive_search_word.sub(replace, string, occurance)
+
+def get_url_extention (url):
+    '''
+        Return the extention from a URL
+
+        :param url:str
+        :return:str
+    '''
+    parsed = urlparse.urlparse(url)
+    root, ext = splitext(parsed.path)
+
+    return ext

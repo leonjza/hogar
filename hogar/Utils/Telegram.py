@@ -105,6 +105,48 @@ def _send_text_message (recipient, message):
 
     return
 
+def _send_photo_message (recipient, message, delete = True):
+    '''
+        Send a Photo Telegram message.
+
+        Expected dictionary for message is:
+
+        {
+            'location': 'full/path/to/image,
+            'caption': 'A Caption'
+        }
+
+        --
+        @param  recipient:dict  A dictionary of recipient information
+        @param  message:dict    A dictionary with image information
+
+        @return None
+    '''
+
+    requests.post(
+        static_values.telegram_api_endpoint.format(
+            token = API_TOKEN,
+            method = 'sendPhoto',
+            options = ''  # This is POST, so no options
+        ),
+        headers = static_values.headers,
+        verify = static_values.verify_ssl,
+        files = {
+            'photo': open(message['location'], 'rb')
+        },
+        data = {
+            'chat_id': recipient['id'],
+            'caption': message['caption']
+        }
+    )
+
+    # We also need to clean up the photo from disk sometimes
+    if delete:
+        logger.debug('Removing file: {file}'.format(file = message['location']))
+        os.remove(message['location'])
+
+    return
+
 def send_message (recipient, message_type, message):
     '''
         Send a Telegram Message.
@@ -125,7 +167,7 @@ def send_message (recipient, message_type, message):
         'text': _send_text_message,
         'audio': _nothing,
         'document': _nothing,
-        'photo': _nothing,
+        'photo': _send_photo_message,
         'sticker': _nothing,
         'video': _nothing,
         'contact': _nothing,
