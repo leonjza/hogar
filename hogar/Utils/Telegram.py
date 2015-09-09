@@ -136,7 +136,7 @@ def _send_photo_message (recipient, message, delete = True):
         },
         data = {
             'chat_id': recipient['id'],
-            'caption': message['caption']
+            'caption': _truncate_text(_get_mention(recipient) + message['caption']).encode('utf-8')
         }
     )
 
