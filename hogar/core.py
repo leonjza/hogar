@@ -189,7 +189,8 @@ class App(Daemon.Daemon):
                         })
                     ),
                     timeout = long_poll_time,
-                    headers = static_values.headers
+                    headers = static_values.headers,
+                    verify = static_values.verify_ssl
                 )
 
                 logger.debug('Request was made to url: {url}'.format(

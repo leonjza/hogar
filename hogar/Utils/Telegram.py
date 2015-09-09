@@ -99,7 +99,8 @@ def _send_text_message (recipient, message):
                 'text': _truncate_text(_get_mention(recipient) + message).encode('utf-8')
             })
         ),
-        headers = static_values.headers
+        headers = static_values.headers,
+        verify = static_values.verify_ssl
     )
 
     return

@@ -34,6 +34,7 @@ class values(object):
     headers = {
         'Accept': 'application/json'
     }
+    verify_ssl = True
     possible_message_types = [
         'text', 'audio', 'document', 'photo', 'sticker', 'video', 'contact', 'location'
     ]
