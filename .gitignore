@@ -58,3 +58,4 @@ target/
 # extra
 settings.ini
 python/
+.idea/
