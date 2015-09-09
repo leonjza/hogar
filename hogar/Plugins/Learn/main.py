@@ -22,15 +22,14 @@
 
 ''' A simple key, value storage / retreival plugin '''
 
-from hogar.Models.Base import db
 from hogar.Models.LearnKey import LearnKey
 from hogar.Models.LearnValue import LearnValue
 import peewee
 import logging
+
 logger = logging.getLogger(__name__)
 
-def enabled():
-
+def enabled ():
     '''
         Enabled
 
@@ -44,8 +43,7 @@ def enabled():
 
     return True
 
-def applicable_types():
-
+def applicable_types ():
     '''
         Applicable Types
 
@@ -58,8 +56,7 @@ def applicable_types():
 
     return ['text']
 
-def commands():
-
+def commands ():
     '''
         Commands
 
@@ -73,8 +70,7 @@ def commands():
 
     return ['learn', 'forget', 'show']
 
-def should_reply():
-
+def should_reply ():
     '''
         Should Reply
 
@@ -87,8 +83,7 @@ def should_reply():
 
     return True
 
-def reply_type():
-
+def reply_type ():
     '''
         Reply Type
 
@@ -102,8 +97,7 @@ def reply_type():
 
     return 'text'
 
-def _learn(text):
-
+def _learn (text):
     '''
         Learn
 
@@ -134,7 +128,7 @@ def _learn(text):
             key = values.name.name
         )
 
-    except LearnValue.DoesNotExist, e:
+    except LearnValue.DoesNotExist:
         pass
 
     # Get or create the key if it does not already exist
@@ -145,7 +139,7 @@ def _learn(text):
         key = LearnKey.get(LearnKey.name == request_key)
 
     # Prepare the value, and save it with the key
-    stored_value = LearnValue.create(
+    LearnValue.create(
         name = key, value = request_value
     )
 
@@ -153,8 +147,7 @@ def _learn(text):
         k = request_key, v = request_value
     )
 
-def _forget(text):
-
+def _forget (text):
     '''
         Forget
 
@@ -170,17 +163,16 @@ def _forget(text):
     # Check if we don't already have this value
     try:
         key = LearnKey.get(LearnKey.name == text)
-        key.delete_instance(recursive=True)
+        key.delete_instance(recursive = True)
 
         return 'Ok, I have forgotten everything I know about \'{k}\''.format(k = text)
 
-    except LearnKey.DoesNotExist, e:
+    except LearnKey.DoesNotExist:
         pass
 
     return 'I dont know anything about {k}'.format(k = text)
 
-def _show(text):
-
+def _show (text):
     '''
         Learn
 
@@ -213,7 +205,6 @@ def _show(text):
     values = [v.value for v in LearnValue.select().join(LearnKey).where(LearnKey.name == text)]
 
     if len(values) > 0:
-
         return '\'{k}\' is: {v}'.format(
             k = text,
             v = ', '.join(values)
@@ -221,8 +212,7 @@ def _show(text):
 
     return 'I have no idea what you are talking about.'
 
-def run(message):
-
+def run (message):
     '''
         Run
 
@@ -265,9 +255,9 @@ def run(message):
 
     # Map actions to function and () them
     do_action = {
-        'learn' : _learn,
+        'learn': _learn,
         'forget': _forget,
-        'show'  : _show
+        'show': _show
     }
     response = do_action[action](text)
 

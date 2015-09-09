@@ -23,16 +23,13 @@
 __author__ = 'Leon Jacobs'
 
 import os
-import atexit
 import logging
 import ConfigParser
-import time
 import requests
 import urllib
 import json
 import traceback
 import time
-import atexit
 import multiprocessing as mp
 from datetime import datetime
 
@@ -48,8 +45,7 @@ config.read(
 
 logger = logging.getLogger(__name__)
 
-def response_handler(response, command_map):
-
+def response_handler (response, command_map):
     '''
         Response Handler
 
@@ -80,7 +76,6 @@ def response_handler(response, command_map):
     return
 
 class App(Daemon.Daemon):
-
     '''
         The Hogar App Class
 
@@ -92,7 +87,7 @@ class App(Daemon.Daemon):
     # Parsed plugins are mapped here
     command_map = None
 
-    def set_command_map(self, command_map):
+    def set_command_map (self, command_map):
 
         '''
             Set Command Map
@@ -110,7 +105,8 @@ class App(Daemon.Daemon):
 
         return
 
-    def wait(self, t = 60):
+    @staticmethod
+    def wait (t = 60):
 
         '''
             Wait
@@ -129,7 +125,7 @@ class App(Daemon.Daemon):
 
         return
 
-    def run(self):
+    def run (self):
 
         '''
             The start of Hogar
@@ -220,7 +216,6 @@ class App(Daemon.Daemon):
 
             # Check that the request was actually successful
             if not response.status_code == requests.codes.ok:
-
                 # Ok. The response was not ok. We will log and wait
                 # a little bit as the Telegram API may be grumpy
                 logger.warning('Update check call failed. Server responded with HTTP code: {code}'.format(
@@ -246,7 +241,6 @@ class App(Daemon.Daemon):
 
             # Ensure that the response from the Telegram API is ok
             if 'ok' not in response_data or not response_data['ok']:
-
                 logger.error('Response from Telegram API was not OK. We got: {resp}'.format(
                     resp = str(response_data)
                 ))
@@ -254,7 +248,6 @@ class App(Daemon.Daemon):
 
             # Check that some data was received from the API
             if not response_data['result']:
-
                 logger.debug('This poll retreived no data')
                 continue
 
@@ -262,7 +255,7 @@ class App(Daemon.Daemon):
             # in the next long poll so that we only receive new
             # messages
             max_request_id = max([x['update_id'] for x in response_data['result']])
-            last_request_id =  max_request_id + 1 \
+            last_request_id = max_request_id + 1 \
                 if ((max_request_id + 1) >= last_request_id) else last_request_id
 
             # Start a response handler for every message received
@@ -272,10 +265,9 @@ class App(Daemon.Daemon):
 
             # Add every message to the pool
             for message in response_data['result']:
-
                 # Pop a worker in the pool
                 pool.apply_async(response_handler,
-                    args=(message, self.command_map,))
+                                 args = (message, self.command_map,))
 
             # Close and join the results.
             pool.close()

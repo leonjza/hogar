@@ -29,8 +29,7 @@ import logging
 logger = logging.getLogger(__name__)
 api = 'http://api.urbandictionary.com/v0/define?term={term}'
 
-def enabled():
-
+def enabled ():
     '''
         Enabled
 
@@ -44,8 +43,7 @@ def enabled():
 
     return True
 
-def applicable_types():
-
+def applicable_types ():
     '''
         Applicable Types
 
@@ -58,8 +56,7 @@ def applicable_types():
 
     return ['text']
 
-def commands():
-
+def commands ():
     '''
         Commands
 
@@ -77,8 +74,7 @@ def commands():
 
     return ['urban', 'whatis']
 
-def should_reply():
-
+def should_reply ():
     '''
         Should Reply
 
@@ -91,8 +87,7 @@ def should_reply():
 
     return True
 
-def reply_type():
-
+def reply_type ():
     '''
         Reply Type
 
@@ -106,8 +101,7 @@ def reply_type():
 
     return 'text'
 
-def run(message):
-
+def run (message):
     '''
         Run
 
@@ -133,7 +127,7 @@ def run(message):
     try:
 
         logger.debug('Asking Urban Dictionary what is {term}'.format(
-        term = text))
+            term = text))
 
         # The actual lookup request
         response = requests.get(
@@ -179,8 +173,8 @@ def run(message):
 
     # Construct the final response message
     final_definition = u'{term} is:\n* Definition: {definition}\n* Example: {example}'.format(
-            term = text,
-            definition = definition,
-            example = example)
+        term = text,
+        definition = definition,
+        example = example)
 
     return final_definition

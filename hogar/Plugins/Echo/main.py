@@ -22,8 +22,7 @@
 
 ''' A simple echo plugin '''
 
-def enabled():
-
+def enabled ():
     '''
         Enabled
 
@@ -37,8 +36,7 @@ def enabled():
 
     return True
 
-def applicable_types():
-
+def applicable_types ():
     '''
         Applicable Types
 
@@ -51,8 +49,7 @@ def applicable_types():
 
     return ['text']
 
-def commands():
-
+def commands ():
     '''
         Commands
 
@@ -66,8 +63,7 @@ def commands():
 
     return ['echo', 'say']
 
-def should_reply():
-
+def should_reply ():
     '''
         Should Reply
 
@@ -80,8 +76,7 @@ def should_reply():
 
     return True
 
-def reply_type():
-
+def reply_type ():
     '''
         Reply Type
 
@@ -95,8 +90,7 @@ def reply_type():
 
     return 'text'
 
-def run(message):
-
+def run (message):
     '''
         Run
 

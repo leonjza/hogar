@@ -24,7 +24,6 @@ from peewee import *
 from hogar.Models.Base import BaseModel
 
 class RemindRecurring(BaseModel):
-
     orig_message = CharField(null = True, max_length = 2500)
     rrules = CharField(max_length = 200)
     next_run = DateTimeField(null = True)

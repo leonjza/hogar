@@ -21,7 +21,6 @@
 # THE SOFTWARE.
 
 from hogar.Models.Base import db
-
 from hogar.Models.LearnKey import LearnKey
 from hogar.Models.LearnValue import LearnValue
 from hogar.Models.Logger import Logger
@@ -29,13 +28,15 @@ from hogar.Models.RemindOnce import RemindOnce
 from hogar.Models.RemindRecurring import RemindRecurring
 
 import logging
+
 logger = logging.getLogger(__name__)
 
-class DB():
+class DB:
+    def __init__ (self):
+        pass
 
     @staticmethod
-    def setup():
-
+    def setup ():
         '''
             Setup Database Tables
 
@@ -44,8 +45,7 @@ class DB():
         '''
 
         # create the tables if they do not exist
-        with db.execution_context() as ctx:
-
+        with db.execution_context():
             logger.debug('Connected to database: %s' % db.database)
             db.create_tables([
                 LearnKey, LearnValue, Logger, RemindOnce, RemindRecurring

@@ -30,10 +30,10 @@ from hogar.Models.RemindOnce import RemindOnce
 from hogar.Models.RemindRecurring import RemindRecurring
 
 import logging
+
 logger = logging.getLogger(__name__)
 
-def _get_sender_information(message):
-
+def _get_sender_information (message):
     '''
         Get information about who sent a message.
 
@@ -49,18 +49,17 @@ def _get_sender_information(message):
 
     sender_information = {
 
-        'id' : message['chat']['id'],
-        'first_name' : message['from']['first_name'],
-        'last_name' : message['from']['last_name'] \
+        'id': message['chat']['id'],
+        'first_name': message['from']['first_name'],
+        'last_name': message['from']['last_name'] \
             if 'last_name' in message['from'] else None,
-        'username' : '@{u}'.format(u = message['from']['username']) \
+        'username': '@{u}'.format(u = message['from']['username']) \
             if 'username' in message['from'] else None
     }
 
     return sender_information
 
-def run_remind_once():
-
+def run_remind_once ():
     '''
         Run Remind Once
 
@@ -74,9 +73,8 @@ def run_remind_once():
 
     try:
 
-        for reminder in RemindOnce.select().where(RemindOnce.sent == 0, \
-            RemindOnce.time <= datetime.now()):
-
+        for reminder in RemindOnce.select().where(RemindOnce.sent == 0,
+                                                  RemindOnce.time <= datetime.now()):
             logger.debug('Sending one time reminder message with id {id}'.format(
                 id = reminder.id
             ))
@@ -92,14 +90,13 @@ def run_remind_once():
             reminder.sent = 1
             reminder.save()
 
-    except Exception, e:
+    except Exception:
 
         print traceback.format_exc()
 
     return
 
-def run_remind_recurring():
-
+def run_remind_recurring ():
     '''
         Run Remind Recurring
 
@@ -115,14 +112,14 @@ def run_remind_recurring():
 
         # Get reminders have have not been marked as completed, as well as
         # have their next_run date ready or not set
-        for reminder in RemindRecurring.select().where(RemindRecurring.sent == 0, \
-            ((RemindRecurring.next_run <= datetime.now()) | (RemindRecurring.next_run >> None))):
+        for reminder in RemindRecurring.select().where(RemindRecurring.sent == 0,
+                                                       ((RemindRecurring.next_run <= datetime.now()) | (
+                                                           RemindRecurring.next_run >> None))):
 
             # If we know the next_run date, send the message. If
             # we dont know the next_run, this will be skipped
             # and only the next_run determined
             if reminder.next_run is not None:
-
                 logger.debug('Sending recurring reminder message with id {id}'.format(
                     id = reminder.id
                 ))
@@ -138,13 +135,12 @@ def run_remind_recurring():
             # determinig the next run based on the parsed RRULE
             # relative from now.
             next_run = rrulestr(reminder.rrules,
-                dtstart = datetime.now()).after(datetime.now())
+                                dtstart = datetime.now()).after(datetime.now())
 
             # If there is no next run, consider the
             # schedule complete and mark it as
             # sent
             if not next_run:
-
                 reminder.sent = 1
                 reminder.save()
 

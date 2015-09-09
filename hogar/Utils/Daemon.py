@@ -33,16 +33,15 @@ import time
 import signal
 
 class Daemon(object):
-
     '''
         A generic daemon class.
 
         Usage: subclass the Daemon class and override the run() method
     '''
 
-    def __init__(self, pidfile, stdin=os.devnull,
-                 stdout=os.devnull, stderr=os.devnull,
-                 home_dir='.', umask=022, verbose=1, use_gevent=False):
+    def __init__ (self, pidfile, stdin = os.devnull,
+                  stdout = os.devnull, stderr = os.devnull,
+                  home_dir = '.', umask = 022, verbose = 1, use_gevent = False):
 
         self.stdin = stdin
         self.stdout = stdout
@@ -54,7 +53,7 @@ class Daemon(object):
         self.daemon_alive = True
         self.use_gevent = use_gevent
 
-    def daemonize(self):
+    def daemonize (self):
 
         '''
             Do the UNIX double-fork magic, see Stevens' 'Advanced
@@ -66,7 +65,6 @@ class Daemon(object):
 
             pid = os.fork()
             if pid > 0:
-
                 # Exit first parent
                 sys.exit(0)
 
@@ -87,7 +85,6 @@ class Daemon(object):
 
             pid = os.fork()
             if pid > 0:
-
                 # Exit from second parent
                 sys.exit(0)
 
@@ -116,7 +113,7 @@ class Daemon(object):
             os.dup2(so.fileno(), sys.stdout.fileno())
             os.dup2(se.fileno(), sys.stderr.fileno())
 
-        def sigtermhandler(signum, frame):
+        def sigtermhandler (signum, frame):
 
             self.daemon_alive = False
             sys.exit()
@@ -143,10 +140,10 @@ class Daemon(object):
         pid = str(os.getpid())
         file(self.pidfile, 'w+').write('%s\n' % pid)
 
-    def delpid(self):
+    def delpid (self):
         os.remove(self.pidfile)
 
-    def start(self, *args, **kwargs):
+    def start (self, *args, **kwargs):
 
         '''
             Start the daemon
@@ -177,7 +174,7 @@ class Daemon(object):
         self.daemonize()
         self.run(*args, **kwargs)
 
-    def stop(self):
+    def stop (self):
 
         '''
             Stop the daemon
@@ -209,7 +206,7 @@ class Daemon(object):
 
                 os.kill(pid, signal.SIGTERM)
                 time.sleep(0.1)
-                i = i + 1
+                i += 1
                 if i % 10 == 0:
                     os.kill(pid, signal.SIGHUP)
 
@@ -227,7 +224,7 @@ class Daemon(object):
         if self.verbose >= 1:
             print 'Stopped'
 
-    def restart(self):
+    def restart (self):
 
         '''
             Restart the daemon
@@ -236,7 +233,7 @@ class Daemon(object):
         self.stop()
         self.start()
 
-    def get_pid(self):
+    def get_pid (self):
 
         try:
 
@@ -252,7 +249,7 @@ class Daemon(object):
 
         return pid
 
-    def is_running(self):
+    def is_running (self):
 
         pid = self.get_pid()
 
@@ -265,7 +262,7 @@ class Daemon(object):
 
         return pid and os.path.exists('/proc/%d' % pid)
 
-    def run(self):
+    def run (self):
 
         '''
             You should override this method when you subclass Daemon.

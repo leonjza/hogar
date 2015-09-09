@@ -24,5 +24,4 @@ from peewee import *
 from hogar.Models.Base import BaseModel
 
 class LearnKey(BaseModel):
-
-    name = CharField(unique=True, max_length = 50)
+    name = CharField(unique = True, max_length = 50)

@@ -21,7 +21,6 @@
 # THE SOFTWARE.
 
 class values(object):
-
     '''
         Static values used by Hogar
 

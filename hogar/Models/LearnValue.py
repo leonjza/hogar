@@ -26,6 +26,5 @@ from hogar.Models.Base import BaseModel
 from hogar.Models.LearnKey import LearnKey
 
 class LearnValue(BaseModel):
-
     name = ForeignKeyField(LearnKey, related_name = 'values')
-    value = CharField(max_length = 250, index=True)
+    value = CharField(max_length = 250, index = True)

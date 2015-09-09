@@ -21,23 +21,19 @@
 # THE SOFTWARE.
 
 from multiprocessing import Pool
+from hogar.Jobs import Reminder
 import schedule
 import time
-import traceback
-import functools
 import os
 import sys
-
-from hogar.Jobs import Reminder
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 # The schedule package is pretty noisy. Reduce that.
 logging.getLogger('schedule').setLevel(logging.WARNING)
 
-def scheduler_init(parent):
-
+def scheduler_init (parent):
     '''
         Schedule Init
 
@@ -61,7 +57,6 @@ def scheduler_init(parent):
         # Check if the current parent pid matches the original
         # parent that started us. If not, we should end.
         if os.getppid() != parent:
-
             logger.error(
                 'Killing scheduler as it has become detached from parent PID.')
 
@@ -73,8 +68,7 @@ def scheduler_init(parent):
 
     return
 
-def boot(ppid):
-
+def boot (ppid):
     '''
         Boot
 
@@ -86,10 +80,10 @@ def boot(ppid):
         @return None
     '''
 
-    pool = Pool(processes=1)
+    pool = Pool(processes = 1)
     logger.debug('Started scheduler pool with 1 process')
 
-    pool.apply_async(scheduler_init, args=(ppid,))
+    pool.apply_async(scheduler_init, args = (ppid,))
     logger.debug('Started async scheduler_init()')
 
     return

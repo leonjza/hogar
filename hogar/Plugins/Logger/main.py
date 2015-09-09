@@ -23,15 +23,13 @@
 ''' A Chat Logger '''
 
 from hogar.static import values as static_values
-
-from hogar.Models.Base import db
 from hogar.Models.Logger import Logger
 
 import logging
+
 logger = logging.getLogger(__name__)
 
-def enabled():
-
+def enabled ():
     '''
         Enabled
 
@@ -45,8 +43,7 @@ def enabled():
 
     return True
 
-def applicable_types():
-
+def applicable_types ():
     '''
         Applicable Types
 
@@ -59,8 +56,7 @@ def applicable_types():
 
     return static_values.possible_message_types
 
-def commands():
-
+def commands ():
     '''
         Commands
 
@@ -72,10 +68,9 @@ def commands():
         @return list
     '''
 
-    return ['*']    # all commands
+    return ['*']  # all commands
 
-def should_reply():
-
+def should_reply ():
     '''
         Should Reply
 
@@ -88,8 +83,7 @@ def should_reply():
 
     return False
 
-def reply_type():
-
+def reply_type ():
     '''
         Reply Type
 
@@ -103,8 +97,7 @@ def reply_type():
 
     return 'text'
 
-def _process_from(message, record):
-
+def _process_from (message, record):
     '''
         Process From
 
@@ -144,8 +137,7 @@ def _process_from(message, record):
 
     return record
 
-def _process_chat(message, record):
-
+def _process_chat (message, record):
     '''
         Process Chat
 
@@ -195,8 +187,7 @@ def _process_chat(message, record):
 
     return record
 
-def _process_file_id(message, record):
-
+def _process_file_id (message, record):
     '''
         Process File ID
 
@@ -260,8 +251,7 @@ def _process_file_id(message, record):
     # return
     return record
 
-def run(message):
-
+def run (message):
     '''
         Run
 
@@ -276,19 +266,19 @@ def run(message):
     '''
 
     # Search for the message type
-    type = [message_type for message_type in static_values.possible_message_types \
-        if message_type in message]
+    tg_type = [message_type for message_type in static_values.possible_message_types \
+               if message_type in message]
 
     # Gran the first entry in the above list.
     # Should never have more than one anyways.
-    type = type[0]
+    tg_type = tg_type[0]
 
     # Check if we already know about this message.
     # Honestly can't think of a case were this
     # will actually happen. Nonetheless, lets
     # check and warn.
     try:
-        l = Logger.get(Logger.message_id == message['message_id'])
+        Logger.get(Logger.message_id == message['message_id'])
         logger.warning('Message {id} already exists in the database.'.format(
             id = message['message_id']
         ))
@@ -297,9 +287,9 @@ def run(message):
     except Logger.DoesNotExist:
 
         # Nope. Create it!
-        logger.debug('Storing message id {id} which is a {type} message'.format(
+        logger.debug('Storing message id {id} which is a {tg_type} message'.format(
             id = message['message_id'],
-            type = type
+            tg_type = tg_type
         ))
 
         # Start a new Logger instance
@@ -307,7 +297,7 @@ def run(message):
 
     # Set some fields that are always applicable
     # to any message type
-    l.message_type = type
+    l.message_type = tg_type
     l.telegram_date = message['date']
 
     # Populate the 'from' details

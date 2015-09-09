@@ -28,12 +28,11 @@ import traceback
 
 import os
 import logging
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 config = ConfigParser.ConfigParser()
 
 class Response(object):
-
     '''
         The Hogar Response handler.
 
@@ -46,9 +45,9 @@ class Response(object):
     command_map = None
     message_type = None
     plugins = None
-    sender_information = {'id' : None, 'first_name' : None, 'last_name' : None, 'username' : None}
+    sender_information = {'id': None, 'first_name': None, 'last_name': None, 'username': None}
 
-    def __init__(self, response, command_map):
+    def __init__ (self, response, command_map):
 
         '''
             Prepare a new Response() instance.
@@ -88,7 +87,7 @@ class Response(object):
 
         return
 
-    def _get_message_type(self):
+    def _get_message_type (self):
 
         '''
             Get the message type.
@@ -99,7 +98,7 @@ class Response(object):
 
         # Search for the message type
         type_search = [message_type for message_type in static_values.possible_message_types \
-            if message_type in self.response]
+                       if message_type in self.response]
 
         # check that we only got 1 result back from the search
         if len(type_search) > 1:
@@ -109,7 +108,7 @@ class Response(object):
 
         return type_search[0]
 
-    def _get_sender_information(self):
+    def _get_sender_information (self):
 
         '''
             Get information about who sent a message.
@@ -122,17 +121,17 @@ class Response(object):
 
         sender_information = {
 
-            'id' : self.response['chat']['id'],
-            'first_name' : self.response['from']['first_name'],
-            'last_name' : self.response['from']['last_name'] \
+            'id': self.response['chat']['id'],
+            'first_name': self.response['from']['first_name'],
+            'last_name': self.response['from']['last_name'] \
                 if 'last_name' in self.response['from'] else None,
-            'username' : '@{u}'.format(u = self.response['from']['username']) \
+            'username': '@{u}'.format(u = self.response['from']['username']) \
                 if 'username' in self.response['from'] else None
         }
 
         return sender_information
 
-    def _find_applicable_plugins(self):
+    def _find_applicable_plugins (self):
 
         '''
             Find Applicable plugins based on message type.
@@ -159,7 +158,6 @@ class Response(object):
             # Some bots will accept commands that started
             # with a '/'
             if text.startswith('/'):
-
                 # Remove the leading /
                 text = text.replace('/', '', 1).strip()
 
@@ -173,11 +171,11 @@ class Response(object):
             # defined as applicable, or any plugins that use
             # the wildcard command
             return [x for x in self.command_map['text'] \
-                if text.split(' ')[0].lower() in x['commands'] or '*' in x['commands']]
+                    if text.split(' ')[0].lower() in x['commands'] or '*' in x['commands']]
 
         return self.command_map[self.message_type]
 
-    def check_acl(self):
+    def check_acl (self):
 
         '''
             Check Access Control List
@@ -204,8 +202,7 @@ class Response(object):
             return True
 
         if message_from_id not in config.get('acl', 'owners').split(',') \
-            and message_from_id not in config.get('acl', 'users').split(','):
-
+                and message_from_id not in config.get('acl', 'users').split(','):
             logger.error('{first_name} ({id}) is not allowed to use this bot'.format(
                 first_name = self.response['from']['first_name'],
                 id = message_from_id
@@ -214,7 +211,7 @@ class Response(object):
 
         return True
 
-    def run_plugins(self):
+    def run_plugins (self):
 
         '''
             Run Plugins
@@ -240,7 +237,7 @@ class Response(object):
         config.read(
             os.path.join(os.path.dirname(__file__), '../settings.ini'))
         acl_free_plugins = [x.strip() \
-            for x in config.get('advanced', 'no_acl_plugins', '').split(',')]
+                            for x in config.get('advanced', 'no_acl_plugins', '').split(',')]
 
         for plugin in self.plugins:
 
@@ -268,7 +265,6 @@ class Response(object):
 
                 # If we got None from the load, error out
                 if not loaded_plugin:
-
                     logger.critical('Loading plugin {name} returned nothing.'.format(
                         name = plugin['name']))
 

@@ -22,10 +22,9 @@
 
 import imp
 import os
-import sys
 from hogar.static import values as static_values
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 # Plugins will typically live in hogar/Plugins/
@@ -35,8 +34,7 @@ plugin_path = os.path.abspath(
 # A plugin will have its entypoint defined by the main.py file.
 plugin_enty = 'main'
 
-def get_plugins():
-
+def get_plugins ():
     '''
         Get Plugins
 
@@ -62,12 +60,11 @@ def get_plugins():
 
         logger.debug('{plugin} seems valid. Adding to available plugins'.format(plugin = i))
         info = imp.find_module(plugin_enty, [location])
-        plugins.append({ 'name': i, 'info': info })
+        plugins.append({'name': i, 'info': info})
 
     return plugins
 
-def find_plugin(name):
-
+def find_plugin (name):
     '''
         Find Plugin
 
@@ -86,15 +83,13 @@ def find_plugin(name):
     for i in os.listdir(plugin_path):
 
         if i == name:
-
             location = os.path.join(plugin_path, i)
             info = imp.find_module(plugin_enty, [location])
-            return { 'name': i, 'info': info }
+            return {'name': i, 'info': info}
 
     return
 
-def load_plugin(plugin):
-
+def load_plugin (plugin):
     '''
         Load a Plugin
 
@@ -115,8 +110,7 @@ def load_plugin(plugin):
         if fp:
             fp.close()
 
-def prepare_plugins():
-
+def prepare_plugins ():
     '''
         Prepare Plugins
 
@@ -129,7 +123,7 @@ def prepare_plugins():
 
     # Prepare a dictionary of possible message
     # types that will have lists of plugins
-    command_map = { message_type: [] for message_type in static_values.possible_message_types }
+    command_map = {message_type: [] for message_type in static_values.possible_message_types}
 
     # Read all of the plugins out of the plugins directory
     plugins = get_plugins()
@@ -172,9 +166,10 @@ def prepare_plugins():
 
         # Check the applicable types list
         if not isinstance(plugin_applicable_types, list) or len(plugin_applicable_types) < 1:
-            logger.error('Skipping plugin {name}. Applicable Types should be returned as a list in applicable_types()'.format(
-                name = plugin['name']
-            ))
+            logger.error(
+                'Skipping plugin {name}. Applicable Types should be returned as a list in applicable_types()'.format(
+                    name = plugin['name']
+                ))
             continue
 
         # check that the defined message types that
@@ -215,8 +210,8 @@ def prepare_plugins():
         # load the commands into the command_map
         for message_type in plugin_applicable_types:
             command_map[message_type].append({
-                'name' : plugin['name'],
-                'commands' : plugin_commands
+                'name': plugin['name'],
+                'commands': plugin_commands
             })
 
     return command_map

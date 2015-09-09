@@ -56,8 +56,7 @@ logging.getLogger('urllib3').setLevel(logging.WARNING)
 logging.getLogger('peewee').setLevel(logging.INFO)
 logging.getLogger('requests').setLevel(logging.WARNING)
 
-def banner():
-
+def banner ():
     '''
         Print the Hogar Banner
 
@@ -75,8 +74,7 @@ def banner():
                    v{v} - @leonjza
     '''.format(v = static_values.version)
 
-def qprint(message):
-
+def qprint (message):
     '''
         QPrint
 
@@ -91,7 +89,6 @@ def qprint(message):
         print message
 
     return
-
 
 if __name__ == '__main__':
 
@@ -109,7 +106,7 @@ if __name__ == '__main__':
     qprint(banner())
 
     # prepare a db setup command
-    if len(sys.argv) > 1 :
+    if len(sys.argv) > 1:
 
         # Initiate the Hogar
         app = App(os.path.dirname(

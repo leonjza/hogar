@@ -24,7 +24,6 @@ from peewee import *
 from hogar.Models.Base import BaseModel
 
 class RemindOnce(BaseModel):
-
     orig_message = CharField(null = True, max_length = 2500)
     time = DateTimeField()
     message = CharField(null = True, max_length = 2500)

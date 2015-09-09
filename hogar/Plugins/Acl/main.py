@@ -25,10 +25,10 @@
 import os
 import ConfigParser
 import logging
+
 logger = logging.getLogger(__name__)
 
-def enabled():
-
+def enabled ():
     '''
         Enabled
 
@@ -42,8 +42,7 @@ def enabled():
 
     return True
 
-def applicable_types():
-
+def applicable_types ():
     '''
         Applicable Types
 
@@ -56,8 +55,7 @@ def applicable_types():
 
     return ['contact']
 
-def commands():
-
+def commands ():
     '''
         Commands
 
@@ -71,8 +69,7 @@ def commands():
 
     return []
 
-def should_reply():
-
+def should_reply ():
     '''
         Should Reply
 
@@ -85,8 +82,7 @@ def should_reply():
 
     return True
 
-def reply_type():
-
+def reply_type ():
     '''
         Reply Type
 
@@ -100,8 +96,7 @@ def reply_type():
 
     return 'text'
 
-def run(message):
-
+def run (message):
     '''
         Run
 
@@ -179,7 +174,7 @@ def run(message):
 
     # Write the confuration changes
     with open(
-        os.path.join(os.path.dirname(__file__), '../../../settings.ini'), 'wb') as s:
+            os.path.join(os.path.dirname(__file__), '../../../settings.ini'), 'wb') as s:
         config.write(s)
 
     return status

@@ -24,25 +24,22 @@
 
 from recurrent import RecurringEvent
 from dateutil.rrule import rrulestr
+from hogar.Models.RemindOnce import RemindOnce
+from hogar.Models.RemindRecurring import RemindRecurring
 import os
 import arrow
 import datetime
-import time
 import json
 import ConfigParser
-
-from hogar.Models.RemindOnce import RemindOnce
-from hogar.Models.RemindRecurring import RemindRecurring
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 config = ConfigParser.ConfigParser()
 config.read(
     os.path.join(os.path.dirname(__file__), '../../../settings.ini'))
 
-def enabled():
-
+def enabled ():
     '''
         Enabled
 
@@ -56,8 +53,7 @@ def enabled():
 
     return True
 
-def applicable_types():
-
+def applicable_types ():
     '''
         Applicable Types
 
@@ -70,8 +66,7 @@ def applicable_types():
 
     return ['text']
 
-def commands():
-
+def commands ():
     '''
         Commands
 
@@ -89,8 +84,7 @@ def commands():
 
     return ['reminder', 'remind']
 
-def should_reply():
-
+def should_reply ():
     '''
         Should Reply
 
@@ -103,8 +97,7 @@ def should_reply():
 
     return True
 
-def reply_type():
-
+def reply_type ():
     '''
         Reply Type
 
@@ -118,8 +111,7 @@ def reply_type():
 
     return 'text'
 
-def _extract_parts(text):
-
+def _extract_parts (text):
     '''
         Extract Parts
 
@@ -156,7 +148,7 @@ def _extract_parts(text):
         'parsed_time': None,
         'message': None,
         'error': False,
-        'error_message' : None
+        'error_message': None
     }
 
     # Check the action_recipient
@@ -164,7 +156,6 @@ def _extract_parts(text):
 
     # Ensure that the action is something we understand
     if action_recipient not in ['set', 'show', 'stop', 'help']:
-
         parts['error'] = True
         parts['error_message'] = 'Unknown command: {c}'.format(
             c = action_recipient
@@ -175,7 +166,6 @@ def _extract_parts(text):
     # We are happy with the action. show and stop
     # actions dont care about the rest
     if action_recipient in ['show', 'stop', 'help']:
-
         parts['action'] = action_recipient
         return parts
 
@@ -188,7 +178,6 @@ def _extract_parts(text):
 
     # Check that the recurrence is valid
     if recurrence not in ['once', 'every']:
-
         parts['error'] = True
         parts['error_message'] = 'Unknown recurrence: {r}'.format(
             r = recurrence
@@ -204,7 +193,6 @@ def _extract_parts(text):
     # Next, we parse the time. For this we should be
     # able to split by ,
     if len(text.split(',', 1)) != 2:
-
         parts['error'] = True
         parts['error_message'] = 'Time and message should be seperated by a comma ( , ) character'
 
@@ -221,7 +209,6 @@ def _extract_parts(text):
 
     # If the time parsing failed, oh well.
     if parsed_time is None:
-
         parts['error'] = True
         parts['error_message'] = 'Unable to parse time: {t}'.format(
             t = time
@@ -237,8 +224,7 @@ def _extract_parts(text):
 
     return parts
 
-def _set_once_reminder(r, orig_message):
-
+def _set_once_reminder (r, orig_message):
     '''
         Set Once Reminder
 
@@ -263,8 +249,7 @@ def _set_once_reminder(r, orig_message):
 
     return
 
-def _set_recurring_reminder(r, orig_message):
-
+def _set_recurring_reminder (r, orig_message):
     '''
         Set Recurring Reminder
 
@@ -287,14 +272,13 @@ def _set_recurring_reminder(r, orig_message):
         orig_message = json.dumps(orig_message),
         rrules = r['parsed_time'],
         next_run = rrulestr(r['parsed_time'],
-            dtstart = datetime.datetime.now()).after(datetime.datetime.now()),
+                            dtstart = datetime.datetime.now()).after(datetime.datetime.now()),
         message = r['message']
     )
 
     return
 
-def _show_all_reminders(message):
-
+def _show_all_reminders (message):
     '''
         Show All Reminders
 
@@ -310,14 +294,14 @@ def _show_all_reminders(message):
     response = '\n# One time reminders:\n\n'
 
     for reminder in RemindOnce.select().where(RemindOnce.sent == 0, \
-                RemindOnce.time >= datetime.datetime.now()):
+                                              RemindOnce.time >= datetime.datetime.now()):
 
         orig_message = json.loads(reminder.orig_message)
         if orig_message['chat']['id'] == message['chat']['id']:
             response += '(#{id}) {human} @{time} | {message}\n'.format(
                 id = reminder.id,
                 human = arrow.get(reminder.time,
-                    config.get('reminder', 'timezone', 'UTC')).humanize(),
+                                  config.get('reminder', 'timezone', 'UTC')).humanize(),
                 time = str(reminder.time),
                 message = reminder.message[:20] + '...' \
                     if len(reminder.message) > 20 else reminder.message)
@@ -325,22 +309,21 @@ def _show_all_reminders(message):
     response += '\n# Recurring reminders:\n\n'
 
     for reminder in RemindRecurring.select().where(RemindRecurring.sent == 0, \
-        RemindRecurring.next_run >= datetime.datetime.now()):
+                                                   RemindRecurring.next_run >= datetime.datetime.now()):
 
         orig_message = json.loads(reminder.orig_message)
         if orig_message['chat']['id'] == message['chat']['id']:
             response += '(#{id}) {human} @{next_run} | {message}\n'.format(
                 id = reminder.id,
                 human = arrow.get(reminder.next_run,
-                    config.get('reminder', 'timezone', 'UTC')).humanize(),
+                                  config.get('reminder', 'timezone', 'UTC')).humanize(),
                 next_run = str(reminder.next_run),
                 message = reminder.message[:20] + '...' \
                     if len(reminder.message) > 20 else reminder.message)
 
     return response
 
-def _stop_reminder(message):
-
+def _stop_reminder (message):
     '''
         Stop A Reminder
 
@@ -367,7 +350,7 @@ def _stop_reminder(message):
     # if its not 2
     if len(parts_list) != 2:
         return 'Could not understand what you wanted. Expecting:\n' + \
-            'remind stop [once/recurring] [message number]'
+               'remind stop [once/recurring] [message number]'
 
     message_type = parts_list[0]
     message_number = parts_list[1]
@@ -375,7 +358,7 @@ def _stop_reminder(message):
     # Check that we got once or recurring
     if message_type not in ['once', 'recurring']:
         return 'Could not figure out which message type you are referring to. ' + \
-            'Expected \'once\' / \'recurring\''
+               'Expected \'once\' / \'recurring\''
 
     # For once time messages, perform the chatID check
     # and mark the message as sent if its ok
@@ -395,7 +378,7 @@ def _stop_reminder(message):
                     id = message['chat']['id']))
                 return 'That message number does not exist or you dont own it.'
 
-        except RemindOnce.DoesNotExist, e:
+        except RemindOnce.DoesNotExist:
             return 'That message number does not exist or you dont own it.'
 
         return 'Done stopping the one time reminder'
@@ -417,7 +400,7 @@ def _stop_reminder(message):
                     id = message['chat']['id']))
                 return 'That message number does not exist or you dont own it.'
 
-        except RemindRecurring.DoesNotExist, e:
+        except RemindRecurring.DoesNotExist:
             return 'That message number does not exist or you dont own it.'
 
         return 'Done stopping the recurring reminder'
@@ -426,8 +409,7 @@ def _stop_reminder(message):
     # just in case...
     return 'Nothing happend...'
 
-def _show_help(message):
-
+def _show_help (message):
     '''
         Show Help
 
@@ -449,8 +431,7 @@ def _show_help(message):
 
     return h
 
-def run(message):
-
+def run (message):
     '''
         Run
 
@@ -496,7 +477,6 @@ def run(message):
 
     # If there was an error with the message, show it
     if parts['error']:
-
         error_message = 'Reminder not set. Error was: {e}.\n\n{help}'.format(
             e = parts['error_message'],
             help = _show_help(None)
@@ -507,11 +487,10 @@ def run(message):
     # Handle a few control commands that should show
     # stop or display help for this plugin
     if parts['action'] in ['show', 'stop', 'help']:
-
         handle_action = {
-            'show' : _show_all_reminders,
-            'stop' : _stop_reminder,
-            'help' : _show_help,
+            'show': _show_all_reminders,
+            'stop': _stop_reminder,
+            'help': _show_help,
         }
 
         # Handle and return the returned message

@@ -36,7 +36,7 @@ db_engine = config.get('main', 'db_engine')
 if db_engine == 'sqlite':
 
     db_name = config.get('sqlite', 'database_location')
-    db = SqliteExtDatabase(db_name, threadlocals=True, journal_mode='WAL')
+    db = SqliteExtDatabase(db_name, threadlocals = True, journal_mode = 'WAL')
 
 elif db_engine == 'mysql':
 
@@ -46,20 +46,18 @@ elif db_engine == 'mysql':
     db_dbhost = config.get('mysql', 'host')
 
     db = PooledMySQLDatabase(
-            db_database,
-            max_connections = 32,
-            stale_timeout = 300,
-            host = db_dbhost,
-            user = db_username,
-            passwd = db_password
-        )
+        db_database,
+        max_connections = 32,
+        stale_timeout = 300,
+        host = db_dbhost,
+        user = db_username,
+        passwd = db_password
+    )
 else:
     raise Exception('Invalid db_engine option in settings file.')
 
 class BaseModel(Model):
-
     ''' The base database Model '''
 
     class Meta:
         database = db
-

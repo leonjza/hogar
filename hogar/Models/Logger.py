@@ -26,8 +26,7 @@ from hogar.Models.Base import BaseModel
 import datetime
 
 class Logger(BaseModel):
-
-    created_date = DateTimeField(default=datetime.datetime.now)
+    created_date = DateTimeField(default = datetime.datetime.now)
 
     message_id = IntegerField(unique = True, index = True)
     message_type = CharField(max_length = 50, index = True)
@@ -40,7 +39,7 @@ class Logger(BaseModel):
 
     chat_title = CharField(null = True, max_length = 250, index = True)
     chat_id = IntegerField(null = True, index = True)
-    chat_username= CharField(null = True, max_length = 250, index = True)
+    chat_username = CharField(null = True, max_length = 250, index = True)
     chat_first_name = CharField(null = True, max_length = 250, index = True)
     chat_last_name = CharField(null = True, max_length = 250, index = True)
     chat_id = IntegerField(null = True, index = True)

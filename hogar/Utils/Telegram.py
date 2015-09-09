@@ -25,8 +25,8 @@ import requests
 import urllib
 import ConfigParser
 from hogar.static import values as static_values
-
 import logging
+
 logger = logging.getLogger(__name__)
 
 config = ConfigParser.ConfigParser()
@@ -35,8 +35,7 @@ config.read(
 
 API_TOKEN = config.get('main', 'bot_access_token', '')
 
-def _nothing(recipient, message):
-
+def _nothing (recipient, message):
     '''
         Do Nothing(tm)
 
@@ -49,8 +48,7 @@ def _nothing(recipient, message):
 
     return
 
-def _get_mention(recipient):
-
+def _get_mention (recipient):
     '''
         Get a Mention
 
@@ -67,8 +65,7 @@ def _get_mention(recipient):
         if recipient['username'] is not None \
         else '{f}: '.format(f = recipient['first_name'].encode('utf-8'))
 
-def _truncate_text(message, length = 1900):
-
+def _truncate_text (message, length = 1900):
     '''
         Truncate Text
 
@@ -81,8 +78,7 @@ def _truncate_text(message, length = 1900):
 
     return message[:length] + '[truncated]' if len(message) > length else message
 
-def _send_text_message(recipient, message):
-
+def _send_text_message (recipient, message):
     '''
         Send a Text Telegram message.
 
@@ -94,7 +90,7 @@ def _send_text_message(recipient, message):
     '''
 
     # Send the request
-    response = requests.get(
+    requests.get(
         static_values.telegram_api_endpoint.format(
             token = API_TOKEN,
             method = 'sendMessage',
@@ -108,8 +104,7 @@ def _send_text_message(recipient, message):
 
     return
 
-def send_message(recipient, message_type, message):
-
+def send_message (recipient, message_type, message):
     '''
         Send a Telegram Message.
 
@@ -126,14 +121,14 @@ def send_message(recipient, message_type, message):
     '''
 
     options = {
-        'text' : _send_text_message,
-        'audio' : _nothing,
-        'document' : _nothing,
-        'photo' : _nothing,
-        'sticker' : _nothing,
-        'video' : _nothing,
-        'contact' : _nothing,
-        'location' : _nothing,
+        'text': _send_text_message,
+        'audio': _nothing,
+        'document': _nothing,
+        'photo': _nothing,
+        'sticker': _nothing,
+        'video': _nothing,
+        'contact': _nothing,
+        'location': _nothing,
     }
 
     # Log the sending of a message
