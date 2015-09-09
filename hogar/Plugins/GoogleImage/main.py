@@ -127,7 +127,9 @@ def ask_google (term):
         # The actual lookup request
         response = requests.get(
             api.format(
-                term = term.encode('utf-8')))
+                term = term.encode('utf-8')),
+            verify = static_values.verify_ssl
+        )
 
         response = json.loads(response.text.strip())
 
@@ -169,7 +171,7 @@ def save_image (info):
     ext = get_url_extention(info['url'])
 
     if ext not in ['.jpg', '.png', '.gif', '.bmp']:
-        return  return_data
+        return return_data
 
     file_name = static_values.data_dir + '/' + str(uuid.uuid4()) + ext
     logger.debug('Saving image from {url} to {filename}'.format(
@@ -179,7 +181,10 @@ def save_image (info):
 
     try:
         with open(file_name, 'wb') as handle:
-            image_stream = requests.get(info['url'], stream = True)
+            image_stream = requests.get(
+                info['url'], stream = True,
+                verify = static_values.verify_ssl
+            )
 
             if not image_stream.ok:
                 return return_data
