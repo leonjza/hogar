@@ -117,8 +117,6 @@ class Response(object):
             @return dict
         '''
 
-        sender = self.response
-
         sender_information = {
 
             'id': self.response['chat']['id'],
@@ -284,7 +282,7 @@ class Response(object):
 
             # If we should be replying to the message,
             # do it.
-            if (loaded_plugin.should_reply()):
+            if loaded_plugin.should_reply():
 
                 # Check what the reply type should be. Plugins
                 # that don't specify one will default to text

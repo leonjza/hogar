@@ -22,6 +22,7 @@
 
 ''' A simple Urban Dictionary Lookup Plugin '''
 
+from hogar.Utils.StringUtils import ignore_case_replace
 import requests
 import json
 import logging
@@ -120,7 +121,7 @@ def run (message):
 
     # Remove the trigger command
     for command in commands():
-        text = text.replace(command, '', 1).strip()
+        text = ignore_case_replace(command, '', text).strip()
 
     # Call Urban Dictionary API for a definition
     # if the user supplied term

@@ -19,22 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+import re
 
-class values(object):
+def ignore_case_replace (search, replace, string, occurance = 1):
     '''
-        Static values used by Hogar
+        Replace a search term in a string, ignoring case.
 
-        Items such as versioning, API endpoints etc
-        are recorded here. This makes it easy to
-        change and take affect app wide.
+        :param search: str      The term to search for
+        :param replace: str     The term to replace with
+        :param string: str      The string to search the term for
+        :param occurance: int   The amount of occurances to replace
+        :return: str
     '''
+    insensitive_search_word = re.compile(re.escape(search), re.IGNORECASE)
 
-    version = '1.1'
-    telegram_api_endpoint = 'https://api.telegram.org/bot{token}/{method}?{options}'
-    headers = {
-        'Accept': 'application/json'
-    }
-    verify_ssl = True
-    possible_message_types = [
-        'text', 'audio', 'document', 'photo', 'sticker', 'video', 'contact', 'location'
-    ]
+    # We keep replacing the result as there could be more
+    # than one keyword to work with
+    return insensitive_search_word.sub(replace, string, occurance)

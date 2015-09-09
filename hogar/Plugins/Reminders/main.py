@@ -21,7 +21,7 @@
 # THE SOFTWARE.
 
 ''' A Simple Reminder Plugin '''
-
+from hogar.Utils.StringUtils import ignore_case_replace
 from recurrent import RecurringEvent
 from dateutil.rrule import rrulestr
 from hogar.Models.RemindOnce import RemindOnce
@@ -468,9 +468,9 @@ def run (message):
             command = action
         )
 
-    # Remove the trigger commands
+    # Remove the trigger command
     for command in commands():
-        text = text.replace(command, '', 1).strip()
+        text = ignore_case_replace(command, '', text).strip()
 
     # Now, parse the reminder line
     parts = _extract_parts(text)

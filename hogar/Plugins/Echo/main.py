@@ -20,6 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from hogar.Utils.StringUtils import ignore_case_replace
+
 ''' A simple echo plugin '''
 
 def enabled ():
@@ -119,6 +121,6 @@ def run (message):
 
     # Remove the trigger command
     for command in commands():
-        text = text.replace(command, '', 1).strip()
+        text = ignore_case_replace(command, '', text).strip()
 
     return text

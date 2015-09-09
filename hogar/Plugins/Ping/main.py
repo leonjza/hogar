@@ -104,4 +104,4 @@ def run (message):
         @return str
     '''
 
-    return 'Pong'
+    return 'pong'
