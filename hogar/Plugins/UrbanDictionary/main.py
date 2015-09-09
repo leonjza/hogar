@@ -162,8 +162,25 @@ def run (message):
     # Try and parse a JSON response from the API
     try:
 
+        # check that we actually got something
+        if response_data['result_type'] == 'no_results':
+            return 'The lookup returned no results.'
+
+    except Exception, e:
+
+        logger.error('Failed to extract definition and example with error: {error}'.format(
+            error = str(e)))
+
+        return 'Unable to parse response. See logs for more details.'
+
+    # Get the actual definitions
+    try:
+
         definition = response_data['list'][0]['definition']
         example = response_data['list'][0]['example']
+        author = response_data['list'][0]['author']
+        permalink = response_data['list'][0]['permalink']
+        tags = ', '.join(response_data['tags'])
 
     except Exception, e:
 
@@ -173,9 +190,13 @@ def run (message):
         return 'Unable to parse response. See logs for more details.'
 
     # Construct the final response message
-    final_definition = u'{term} is:\n* Definition: {definition}\n* Example: {example}'.format(
+    final_definition = u'\'{term}\' is defined by \'{author}\' as:\n\n* Definition: {definition}\n* Example: {' \
+                       u'example}\n\nTags: {tags}\n\nSee: {permalink}'.format(
         term = text,
+        author = author,
         definition = definition,
-        example = example)
+        example = example,
+        tags = tags,
+        permalink = permalink)
 
     return final_definition
