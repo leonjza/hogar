@@ -160,7 +160,7 @@ class App(Daemon.Daemon):
 
         # Check that we know the bot access token
         if len(api_token) < 1:
-            raise ValeError('Please define a Bot Access token in the settings file.')
+            raise ValueError('Please define a Bot Access token in the settings file.')
 
         # Boot the scheduler.
         Scheduler.boot(os.getpid())
