@@ -20,11 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-''' A descrition of your plugin '''
+''' Send a random image based on a Search Term '''
+
+import imghdr
 import random
 import uuid
 from hogar.Utils.StringUtils import ignore_case_replace, get_url_extention
 from hogar.static import values as static_values
+import os
 import requests
 import json
 import logging
@@ -104,7 +107,7 @@ def reply_type ():
 
     return 'photo'
 
-def ask_google (term):
+def _ask_google (term):
     '''
         Calls the Google API in serach of image URL's that relate
         to the Term
@@ -149,7 +152,7 @@ def ask_google (term):
 
     return return_data
 
-def save_image (info):
+def _save_image (info):
     '''
         Save Image
 
@@ -179,24 +182,41 @@ def save_image (info):
         filename = file_name
     ))
 
+    # Try to download and save the image from the URL
     try:
+
         with open(file_name, 'wb') as handle:
             image_stream = requests.get(
                 info['url'], stream = True,
                 verify = static_values.verify_ssl
             )
 
-            if not image_stream.ok:
+            if not image_stream.status_code == requests.codes.ok:
+                logger.warning('HTTP response was {code} for URL: {url} and therefore failed'.format(
+                    code = image_stream.status_code,
+                    url = info['url']
+                ))
                 return return_data
 
             for block in image_stream.iter_content(1024):
                 handle.write(block)
+
+            # Do a last check to ensure that we got an image.
+            # It looks like Telegram will silently discard any
+            # photos that are not actually images.
+            if not imghdr.what(file_name):
+                logger.warning('File {file} is not an image it seems. Deleting.'.format(
+                    file = file_name
+                ))
+                os.remove(file_name)
+                return return_data
 
         # Update the response_data
         return_data['location'] = file_name
         return_data['caption'] = info['title']
 
     except Exception, e:
+
         logger.error('Google Image lookup failed with: {error}'.format(
             error = str(e)))
         return return_data
@@ -234,7 +254,7 @@ def run (message):
     for command in commands():
         text = ignore_case_replace(command, '', text).strip()
 
-    possible_images = ask_google(text)
+    possible_images = _ask_google(text)
 
     if possible_images['failed']:
         return {
@@ -242,7 +262,7 @@ def run (message):
             'caption': 'Image retreival failed. See logs for details.'
         }
 
-    location_and_caption = save_image(
+    location_and_caption = _save_image(
         random.choice(possible_images['urls']))
 
     return location_and_caption

@@ -141,7 +141,7 @@ def _send_photo_message (recipient, message, delete = True):
     )
 
     # We also need to clean up the photo from disk sometimes
-    if delete:
+    if delete and 'no_image.png' not in message['location']:
         logger.debug('Removing file: {file}'.format(file = message['location']))
         os.remove(message['location'])
 
