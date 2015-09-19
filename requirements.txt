@@ -5,3 +5,4 @@ schedule
 recurrent
 python-dateutil
 arrow
+pyjokes
