@@ -83,6 +83,7 @@ def qprint (message):
 
         --
         @return None
+        :param message: The message to print
     '''
 
     if 'quiet' not in sys.argv:
