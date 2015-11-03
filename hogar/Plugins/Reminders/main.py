@@ -293,7 +293,7 @@ def _show_all_reminders (message):
 
     response = '\n# One time reminders:\n\n'
 
-    for reminder in RemindOnce.select().where(RemindOnce.sent == 0, \
+    for reminder in RemindOnce.select().where(RemindOnce.sent == 0,
                                               RemindOnce.time >= datetime.datetime.now()):
 
         orig_message = json.loads(reminder.orig_message)
@@ -308,7 +308,7 @@ def _show_all_reminders (message):
 
     response += '\n# Recurring reminders:\n\n'
 
-    for reminder in RemindRecurring.select().where(RemindRecurring.sent == 0, \
+    for reminder in RemindRecurring.select().where(RemindRecurring.sent == 0,
                                                    RemindRecurring.next_run >= datetime.datetime.now()):
 
         orig_message = json.loads(reminder.orig_message)

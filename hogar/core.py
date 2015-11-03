@@ -116,6 +116,7 @@ class App(Daemon.Daemon):
 
             --
             @return None
+            :param t: The amount of time in secods to wait
         '''
 
         logger.warning('Waiting for {time} seconds'.format(
