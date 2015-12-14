@@ -12,6 +12,10 @@ enabled = no
 owners =
 users =
 
+[imgur]
+client_id =
+nsfw = no
+
 [mysql]
 username = root
 password =
