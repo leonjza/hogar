@@ -46,7 +46,7 @@ The rest of the settings should be ok. If you want to use MySQL instead of the S
 Hogar has a sample plugin that allows you to store and retrieve simple key value pairs. There is also a Logger plugin that ships with the default install. Storage of these reside within the database you have chosen. In order for these plugins to work, you need to setup the database first. To do this, type:
 
 ```bash
-$ python start.py setupdb
+$ python hogarctl.py setupdb
 [snip]
  * Setup of database `var/data.sqlite.db` complete
 ```
